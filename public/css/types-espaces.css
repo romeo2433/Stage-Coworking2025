@@ -1,0 +1,226 @@
+/* === Boutons de filtre === */
+.type-filter {
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.type-filter:hover {
+    transform: translateY(-3px);
+}
+
+/* === Cartes principales === */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* === Animation au scroll === */
+.scroll-animate {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.animate__animated {
+    animation-duration: 0.8s;
+    animation-fill-mode: both;
+}
+
+/* === Titres === */
+h2, h3 {
+    letter-spacing: 1px;
+}
+
+.container {
+    max-width: 1200px;
+}
+
+/* === Carte d’espace === */
+.espace-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 300px; /* ✅ évite que le bouton soit coupé */
+    background: #fff;
+    z-index: 1;
+}
+
+.espace-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* === Image principale === */
+.image-container {
+    position: relative;
+    z-index: 1;
+}
+
+.image-container img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+    display: block;
+}
+
+/* === Overlay (infos détaillées) === */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+    transform: translateY(30px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    text-align: left;
+    border-radius: 10px 10px 0 0;
+    z-index: 2;
+}
+
+.overlay-content {
+    max-height: 100%;
+    overflow-y: auto;
+    animation: fadeUp 0.4s ease forwards;
+}
+
+/* Animation du contenu */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === Effet au survol === */
+.espace-card:hover .overlay {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* === Scrollbar de l’overlay === */
+.overlay-content::-webkit-scrollbar {
+    width: 5px;
+}
+.overlay-content::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+}
+
+/* === Corps de la carte === */
+.card-body {
+    position: relative;
+    z-index: 3; /* ✅ garantit que le bouton est au-dessus */
+    background: #fff;
+    padding: 15px;
+}
+
+.card-footer {
+    position: relative;
+    z-index: 4; /* ✅ au-dessus de l’image */
+    background: #fff;
+}
+
+/* === Responsive (mobile / tablette) === */
+@media (max-width: 768px) {
+    .overlay {
+        position: relative;
+        opacity: 1;
+        visibility: visible;
+        background: #f8f9fa;
+        color: #000;
+        transform: none;
+        padding: 10px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .overlay-content {
+        animation: none;
+        overflow: visible;
+    }
+
+    .image-container img {
+        border-radius: 10px 10px 0 0;
+    }
+
+    .espace-card:hover {
+        transform: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Le contenu s’adapte mieux */
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+    }
+
+    /* On garde tout visible sur mobile */
+    .card-body h5,
+    .card-body p {
+        display: block;
+    }
+
+    /* Le bouton reste bien visible */
+    .card-body .btn {
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+
+
+/*Mettre les menu pour que l'on voit toujours*/
+/* === Barre de filtres fixe === */
+.filters-bar {
+    position: sticky;   /* ✅ Reste visible pendant le scroll */
+    top: 70px;          /* 🔹 Distance depuis le haut (ajuste selon la hauteur du header) */
+    z-index: 1000;      /* 🔹 S'assure qu'elle reste au-dessus des cartes */
+    background: #cebc1c;   /* 🔹 Fond blanc pour bien contraster */
+    padding: 15px 0;
+    border-bottom: 2px solid #e9ecef; /* Ligne décorative optionnelle */
+}
+
+
+/* === Animations personnalisées === */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+}

@@ -1,0 +1,97 @@
+/* ====== Admin Reservations Page Styles ====== */
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Responsive table and card design */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .card-header h4 {
+        font-size: 1.1rem;
+    }
+
+    .table th,
+    .table td {
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.4rem;
+    }
+}
+
+/* Extra small screens (smartphones) */
+@media (max-width: 576px) {
+    .table-responsive {
+        border: none;
+    }
+
+    .card-body {
+        padding: 0.5rem;
+    }
+
+    /* Hide table headers */
+    .table thead {
+        display: none;
+    }
+
+    /* Display rows as cards */
+    .table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        padding: 0.75rem;
+    }
+
+    /* Each cell becomes a line */
+    .table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+        font-size: 0.9rem;
+        padding: 0.25rem 0;
+    }
+
+    .table tbody td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #555;
+    }
+}
+
+/* Badge colors and spacing */
+.badge {
+    padding: 0.5em 0.7em;
+    font-size: 0.8rem;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f7f7f7;
+}
+
+/* Section headers */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.card-header h4 {
+    margin-bottom: 0;
+}
+
+/* Buttons inside tables */
+.btn-group-sm .btn {
+    min-width: 30px;
+}
