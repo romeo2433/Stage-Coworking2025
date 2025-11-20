@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('espace_equipements', function (Blueprint $table) {
             $table->unsignedBigInteger('Id_Espace');
             $table->unsignedBigInteger('Id_Equipement');
-            $table->integer('Nombre_Equipements');
+            $table->integer('Nombre_Equipements')->default(1);
             $table->primary(['Id_Espace', 'Id_Equipement']);
 
             $table->foreign('Id_Espace')

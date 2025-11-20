@@ -15,10 +15,10 @@ class Equipement extends Model
 
     protected $fillable = ['prix', 'nom', 'Etat', 'Id_Type'];
 
-    public function typeEquipement()
+    /*public function typeEquipement()
     {
         return $this->belongsTo(TypeEquipement::class, 'Id_Type');
-    }
+    }*/
 
     public function espaces()
     {

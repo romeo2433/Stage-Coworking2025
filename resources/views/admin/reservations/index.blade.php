@@ -3,11 +3,12 @@
 @section('title', 'Réservations en attente')
 
 @section('content')
-<div class="container-fluid px-0">
+<link rel="stylesheet" href="{{ asset('css/main.css') }}">
+<div class="reservation-wrapper">
     <!-- SECTION RÉSERVATIONS EN ATTENTE -->
     <div class="card shadow-sm mb-5">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center flex-wrap">
-            <h4 class="mb-0">📅 Réservations en attente</h4>
+            <h4 class="mb-0"> Réservations en attente</h4>
             <span class="badge bg-warning text-dark mt-2 mt-md-0">{{ $reservations->count() }} en attente</span>
         </div>
 
@@ -19,6 +20,7 @@
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
 
+            @if($reservations->isNotEmpty())
             <table class="table table-hover align-middle">
                 <thead class="table-light">
                     <tr>
@@ -29,8 +31,8 @@
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse($reservations as $reservation)
+                <tbody> 
+                    @foreach($reservations as $reservation)
                         <tr>
                             <td>{{ $reservation->utilisateur?->Prenom }} {{ $reservation->utilisateur?->Nom }}</td>
                             <td>{{ $reservation->espace?->Nom }}</td>
@@ -40,31 +42,61 @@
                                 <div class="btn-group btn-group-sm">
                                     <form action="{{ route('admin.reservations.confirm', $reservation) }}" method="POST" style="display:inline-block">
                                         @csrf
-                                        <button class="btn btn-success"><i class="fas fa-check"></i></button>
+                                        <button class="btn btn-success" title="Confirmer"><i class="fas fa-check"></i></button>
                                     </form>
                                     <form action="{{ route('admin.reservations.reject', $reservation) }}" method="POST" style="display:inline-block">
                                         @csrf
-                                        <button class="btn btn-danger"><i class="fas fa-times"></i></button>
+                                        <button class="btn btn-danger" title="Rejeter"><i class="fas fa-times"></i></button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-muted">Aucune réservation en attente</td>
-                        </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
-        </div>
-    </div>
+        @else
+            <div class="text-center text-muted py-3">
+                <i class="fas fa-info-circle me-1"></i>
+                Aucune réservation en attente.
+            </div>
+        @endif
+        
 
     <!-- SECTION HISTORIQUE -->
     <div class="card shadow-sm">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center flex-wrap">
-            <h4 class="mb-0">🕓 Historique des réservations</h4>
+            <h4 class="mb-0"> Historique des réservations</h4>
             <span class="badge bg-light text-dark mt-2 mt-md-0">{{ $historique->count() }} au total</span>
         </div>
+
+        <form method="GET" action="{{ route('admin.reservations.index') }}" class="row g-2 mb-4">
+            <div class="col">
+                <input type="text" name="utilisateur" class="form-control" placeholder="Utilisateur" value="{{ request('utilisateur') }}">
+            </div>
+            <div class="col">
+                <input type="text" name="espace" class="form-control" placeholder="Espace" value="{{ request('espace') }}">
+            </div>
+            <div class="col">
+                <input type="date" name="date_debut" class="form-control" placeholder="Date début" value="{{ request('date_debut') }}">
+            </div>
+            <div class="col">
+                <input type="date" name="date_fin" class="form-control" placeholder="Date fin" value="{{ request('date_fin') }}">
+            </div>
+            <div class="col">
+                <select name="statut" class="form-control">
+                    <option value="">Statut</option>
+                    <option value="confirmee" @if(request('statut')=='confirmee')selected @endif>Confirmée</option>
+                    <option value="terminee" @if(request('statut')=='terminee')selected @endif>Terminée</option>
+                    <option value="annulee" @if(request('statut')=='annulee')selected @endif>Annulée</option>
+                </select>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+                <a href="{{ route('admin.reservations.index') }}" class="btn btn-secondary">Réinitialiser</a>
+            </div>
+        </form>
+        
+        
 
         <div class="card-body table-responsive">
             <table class="table table-striped align-middle">
@@ -74,6 +106,7 @@
                         <th>Espace</th>
                         <th>Date début</th>
                         <th>Date fin</th>
+                        <th>Durée</th>
                         <th>Statut</th>
                     </tr>
                 </thead>
@@ -84,13 +117,29 @@
                             <td>{{ $h->espace?->Nom }}</td>
                             <td>{{ $h->date_debut }}</td>
                             <td>{{ $h->date_fin }}</td>
+                            <td>{{ $h->duree_heures }} h</td>
                             <td>
-                                @if($h->Statut_Reservation == 'confirmee')
-                                    <span class="badge bg-success">Confirmée</span>
-                                @else
-                                    <span class="badge bg-dark">Terminer </span>
-                                @endif
+                                @switch($h->Statut_Reservation)
+                                    @case('confirmee')
+                                        <span class="badge bg-success">Confirmée</span>
+                                        @break
+                                    @case('en_attente')
+                                        <span class="badge bg-warning text-dark">En attente</span>
+                                        @break
+                                    @case('terminee')
+                                        <span class="badge bg-secondary">Terminée</span>
+                                        @break
+                                    @case('payee')
+                                        <span class="badge bg-warning">Payer</span>
+                                        @break
+                                    @case('annulee')
+                                        <span class="badge bg-danger">Annulée</span>
+                                        @break
+                                    @default
+                                        <span class="badge bg-dark">Inconnu</span>
+                                @endswitch
                             </td>
+                            
                         </tr>
                     @empty
                         <tr>

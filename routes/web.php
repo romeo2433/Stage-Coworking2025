@@ -7,6 +7,16 @@ use App\Http\Controllers\TypeEspaceController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\Admin\AdminPaiementController;
 use App\Http\Controllers\PaiementController;
+use App\Http\Controllers\Admin\AdminReservationController;
+use App\Http\Controllers\EspaceController;
+use App\Http\Controllers\Admin\ReservationAdminController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\EquipementController;
+use App\Http\Controllers\Admin\StatistiquesController;
+use App\Http\Controllers\Admin\PlanningController;
+use App\Http\Controllers\Api\ReservationApiController;
+use App\Http\Controllers\CalendrierController;
+
 
 
 // Routes publiques
@@ -51,39 +61,101 @@ Route::middleware(['check.utilisateur.connecte'])->group(function () {
     Route::post('/reservation/preview', [ReservationController::class, 'preview'])->name('reservations.preview');
     Route::post('/reservation/confirm', [ReservationController::class, 'confirm'])->name('reservations.confirm');
     Route::get('/mes-reservations', [ReservationController::class, 'myReservations'])->name('reservations.my');
+    Route::get('/mes-reservations', [ReservationController::class, 'myReservations'])->name('reservations.my');
     Route::get('/espaces/{id}/disponibilites', [App\Http\Controllers\ReservationController::class, 'getDisponibilites'])
-    ->name('espaces.disponibilites');
+        ->name('espaces.disponibilites');
 });
 
-Route::get('/calendrier', [App\Http\Controllers\CalendrierController::class, 'index'])
-    ->name('calendrier.index');
+   
+    Route::get('/reservations', [ReservationApiController::class, 'index'])->name('api.reservations');
+    Route::get('/espaces-disponibles', [ReservationApiController::class, 'espacesDisponibles']);
+    Route::get('/calendrier', [CalendrierController::class, 'index'])->name('calendrier.index');
 
 
-
-
-    Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function () {
-        // Dashboard admin
-        Route::get('dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
-    
-        // Espaces
-        Route::get('espaces', [\App\Http\Controllers\TypeEspaceController::class, 'adminIndex'])
-             ->name('espaces.index');
-    
-        // Réservations
-        Route::get('reservations', [\App\Http\Controllers\Admin\ReservationController::class, 'index'])
-             ->name('reservations.index');
-        Route::post('reservations/{reservation}/confirm', [\App\Http\Controllers\Admin\ReservationController::class, 'confirm'])
-             ->name('reservations.confirm');
-        Route::post('reservations/{reservation}/reject', [\App\Http\Controllers\Admin\ReservationController::class, 'reject'])
-             ->name('reservations.reject');
-
-
-        Route::get('/paiements', [AdminPaiementController::class, 'index'])->name('paiements.index');
-        Route::post('/paiements/{id}/payer', [AdminPaiementController::class, 'payer'])->name('paiements.payer');
-        Route::post('/paiements/{id}/annuler', [AdminPaiementController::class, 'annuler'])->name('paiements.annuler');
-    });
-    
     Route::get('/paiements/create/{reservation}', [PaiementController::class, 'create'])->name('paiements.create');
     Route::post('/paiements', [PaiementController::class, 'store'])->name('paiements.store');
+
+    Route::put('/reservations/{id}/annuler', [ReservationController::class, 'annuler'])->name('reservations.annuler');
+    Route::post('/reservations/{id}/delete-client', [ReservationController::class, 'deleteClient'])->name('reservations.deleteClient');
+    Route::get('/reservations/{id}/export-pdf', [ReservationController::class, 'exportPdf'])->name('reservations.exportPdf');
+
+
+
+
+Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function () {
+    // Dashboard admin
+        Route::get('dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');    
+    // Espaces
+        Route::get('espaces', [\App\Http\Controllers\TypeEspaceController::class, 'adminIndex'])
+             ->name('espaces.index');
+    // Réservations
+        Route::get('reservations', [\App\Http\Controllers\Admin\ReservationController::class, 'index'])->name('reservations.index');
+        Route::post('reservations/{reservation}/confirm', [\App\Http\Controllers\Admin\ReservationController::class, 'confirm'])->name('reservations.confirm');
+        Route::post('reservations/{reservation}/reject', [\App\Http\Controllers\Admin\ReservationController::class, 'reject'])->name('reservations.reject');
+        Route::get('espaces/{id}/heures-disponibles', [App\Http\Controllers\Admin\ReservationAdminController::class, 'heuresDisponibles']);
+
+        Route::get('/paiements', [AdminPaiementController::class, 'index'])->name('paiements.index');
+    //Route::post('/paiements/{id}/payer', [AdminPaiementController::class, 'payer'])->name('paiements.payer');
+    //Route::post('/paiements/{id}/annuler', [AdminPaiementController::class, 'annuler'])->name('paiements.annuler');
+    
+    // Bouton Payer
+        Route::get('reservations/montre', [AdminReservationController::class, 'montre'])->name('reservations.montre');
+        Route::post('/reservations/{id}/payer', [AdminPaiementController::class, 'payer'])->name('reservations.payer'); 
+        //Route::put('paiements/{id}', [AdminPaiementController::class, 'update'])->name('paiements.update');
+
+
+        Route::get('/reservations/create', [ReservationAdminController::class, 'create'])->name('reservations.create');
+        Route::post('/reservations/store', [ReservationAdminController::class, 'store'])->name('reservations.store');
+        Route::get('/espaces/{id}/details', [ReservationAdminController::class, 'espaceDetails']);
+        Route::get('espaces/{id}/heures-disponibles', [ReservationAdminController::class, 'heuresDisponibles'])->name('espaces.heures-disponibles');
+
+    //Upload Photo
+        Route::get('/espaces/photos', [EspaceController::class, 'editPhotos'])->name('espaces.photos');
+        Route::put('/espaces/{id}/photo', [EspaceController::class, 'updatePhoto'])->name('espaces.updatePhoto');
+        Route::delete('/espaces/{id}', [EspaceController::class, 'destroy'])->name('espaces.destroy');
+        Route::get('/espaces/{id}/edit', [EspaceController::class, 'edit'])->name('espaces.edit');
+    //edit Espace
+        Route::get('espaces/create', [EspaceController::class, 'create'])->name('espaces.create');
+        Route::post('espaces/store', [EspaceController::class, 'store'])->name('espaces.store');
+    // Page de modification
+        Route::get('/espaces/{id}/edit', [EspaceController::class, 'edit'])->name('espaces.edit');
+    // Enregistrement de la modification
+        Route::put('espaces/{id}', [EspaceController::class, 'update'])->name('espaces.update');
+
+    //Creation d une nouvelle utilisateurs    
+        Route::get('utilisateurs/create', [UserController::class, 'create'])->name('utilisateurs.create');
+        Route::post('utilisateurs/store', [UserController::class, 'store'])->name('utilisateurs.store');
+        Route::post('/utilisateurs/NouveauUtilisateur', [UserController::class, 'NouveauUtilisateur'])->name('utilisateurs.NouveauUtilisateur');
+        
+    // Équipements
+        Route::get('/equipements', [EquipementController::class, 'index'])->name('equipements.index');
+        Route::post('/equipements', [EquipementController::class, 'store'])->name('equipements.store');
+    // Types d'espaces
+        Route::get('types-espaces', [TypeEspaceController::class, 'indexe'])->name('types.indexe');
+        Route::post('types-espaces', [TypeEspaceController::class, 'store'])->name('typesespaces.store');
+        Route::post('types/{id}/update', [TypeEspaceController::class, 'update'])->name('types.update');
+    //Equipement    
+        Route::put('equipements/{id}', [EquipementController::class, 'update'])->name('equipements.update');
+        Route::delete('equipements/{id}', [EquipementController::class, 'destroy'])->name('equipements.destroy');
+    //Statistique
+        Route::get('statistiques', [StatistiquesController::class, 'index'])->name('statistiques.index');   
+    
+    //Checkins
+        Route::get('/planning', [PlanningController::class, 'index'])->name('planning.profil');
+        Route::post('/planning/checkin/{reservation}', [PlanningController::class, 'checkin'])->name('planning.checkin');
+        Route::post('/planning/checkout/{reservation}', [PlanningController::class, 'checkout'])->name('planning.checkout');
+
+   // CRUD Types d’équipements
+        Route::post('/equipements/type', [EquipementController::class, 'storeType'])->name('typesequipements.store');
+        Route::put('/equipements/type/{id}', [EquipementController::class, 'updateType'])->name('typesequipements.update');
+        Route::delete('/equipements/type/{id}', [EquipementController::class, 'destroyType'])->name('typesequipements.destroy');
+
+       
+    });
+   
+ 
+    Route::get('/admin/planning/calendar', [PlanningController::class, 'calendar'])
+    ->name('admin.planning.calendar');
+    

@@ -1,0 +1,60 @@
+/* Animation de flottement */
+@keyframes floatCard {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Animation d'apparition */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Style général des cartes */
+.reservation-card {
+    animation: fadeIn 0.8s ease forwards;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Effet flottant au survol */
+.reservation-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+/* Petit effet de halo animé autour */
+.reservation-card::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #ffdd00, #007bff);
+    opacity: 0;
+    transition: opacity 0.5s;
+    z-index: 0;
+}
+
+.reservation-card:hover::after {
+    opacity: 0.2;
+    animation: floatCard 3s ease-in-out infinite;
+}
+
+/* Pour que le contenu reste au-dessus du halo */
+.reservation-card > * {
+    position: relative;
+    z-index: 1;
+}
+@keyframes pulseEffect {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+.pulse {
+    animation: pulseEffect 0.4s ease;
+}

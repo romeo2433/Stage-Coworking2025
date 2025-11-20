@@ -1,0 +1,574 @@
+/* ===== RESET & BOX-SIZING ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  scroll-behavior: smooth;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.4;
+  color: #1e293b;
+  background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #fffbeb 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== VARIABLES CSS - THÈME BLEU/JAUNE/BLANC ===== */
+:root {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --secondary: #64748b;
+  --accent: #f59e0b;
+  --accent-hover: #d97706;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --light: #ffffff;
+  --dark: #1e293b;
+  --radius: 8px;
+  --radius-sm: 6px;
+  --gap: 1rem;
+  --gap-sm: 0.5rem;
+  --max-width: 1200px;
+  --navbar-height: 60px;
+  --shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+  --shadow-lg: 0 4px 12px rgba(59, 130, 246, 0.15);
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  width: min(100% - 2rem, var(--max-width));
+  margin-inline: auto;
+}
+
+/* ===== UTILITIES ===== */
+.text-center { text-align: center; }
+.mt-1 { margin-top: var(--gap); }
+.mb-1 { margin-bottom: var(--gap); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.4em 0.8em;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+  font: inherit;
+  font-weight: 500;
+  font-size: 0.85rem;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-accent:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.btn-sm { 
+  padding: 0.3em 0.6em; 
+  font-size: 0.8rem; 
+}
+
+/* ===== NAVBAR COMPACTE ===== */
+.navbar {
+  background: linear-gradient(135deg, var(--primary) 0%, #093dca 100%) !important;
+  padding: 0.5rem 0;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1000;
+}
+
+.navbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+}
+
+.navbar-brand h1 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-brand h1::before {
+  content: '⚡';
+  font-size: 1.1em;
+}
+
+.nav-link {
+  color: rgba(255,255,255,0.9) !important;
+  font-weight: 500;
+  padding: 0.4rem 0.8rem !important;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  font-size: 0.85rem;
+  margin: 0 0.1rem;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: white !important;
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-1px);
+}
+
+.nav-link.text-danger:hover {
+  background: rgba(239,68,68,0.2);
+}
+
+/* ===== MAIN & FOOTER ===== */
+main {
+  flex: 1;
+  padding: var(--gap) 0;
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tm-footer {
+  background: linear-gradient(135deg, var(--dark) 0%, #0669f5 100%);
+  color: #cff014;
+  padding: 1.5rem 0;
+  margin-top: auto;
+  font-size: 0.8rem;
+}
+
+/* ===== TABLEAUX ULTRA-COMPACTS ===== */
+.table {
+  font-size: 0.75rem;
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  margin-bottom: 0.5rem;
+}
+
+.table:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.table th {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white;
+  font-weight: 600;
+  padding: 0.4rem 0.6rem !important;
+  border: none;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  padding: 0.3rem 0.6rem !important;
+  vertical-align: middle;
+  border-color: #f1f5f9;
+  transition: var(--transition);
+  line-height: 1.2;
+}
+
+.table tbody tr {
+  transition: var(--transition);
+}
+
+.table tbody tr:hover {
+  background: #f8fafc;
+  transform: scale(1.002);
+}
+
+.table tbody tr:nth-child(even) {
+  background: #fafbff;
+}
+
+.table tbody tr:nth-child(even):hover {
+  background: #f0f4ff;
+}
+
+/* Boutons dans les tableaux */
+.btn-group .btn {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.7rem;
+  border-radius: var(--radius-sm);
+  margin: 0 0.1rem;
+}
+
+/* ===== FORMULAIRES COMPACTS ===== */
+.reservation-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.reservation-form.small {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 450px;
+  padding: 1.2rem;
+  border: 1px solid #e2e8f0;
+  transition: var(--transition);
+  animation: formAppear 0.5s ease-out;
+}
+
+@keyframes formAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.reservation-form.small:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.reservation-form h2 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--dark);
+  font-weight: 600;
+  text-align: center;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.reservation-form h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+/* Grille compacte */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.form-grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  margin-bottom: 0.2rem;
+  color: var(--dark);
+  font-weight: 600;
+}
+
+.form-control-sm,
+.form-select-sm {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  background: white;
+  height: 28px;
+}
+
+.form-control-sm:focus,
+.form-select-sm:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.equipements-zone {
+  grid-column: span 2;
+}
+
+#equipements-container {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem;
+  max-height: 80px;
+  overflow-y: auto;
+  font-size: 0.75rem;
+  transition: var(--transition);
+}
+
+/* ===== CARTES COMPACTES ===== */
+.card {
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  overflow: hidden;
+  margin-bottom: 0.8rem;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white;
+  border: none;
+  padding: 0.6rem 0.8rem !important;
+}
+
+.card-header h4 {
+  font-size: 0.9rem;
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 0.8rem !important;
+  font-size: 0.8rem;
+}
+
+/* Alertes compactes */
+.alert {
+  padding: 0.6rem 0.8rem;
+  margin: 0.5rem 0;
+  font-size: 0.75rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  border-left: 3px solid;
+}
+
+.alert-success {
+  background: #f0fdf4;
+  border-left-color: var(--success);
+  color: #065f46;
+}
+
+.alert-warning {
+  background: #fffbeb;
+  border-left-color: var(--warning);
+  color: #92400e;
+}
+
+.alert-danger {
+  background: #fef2f2;
+  border-left-color: var(--danger);
+  color: #991b1b;
+}
+
+/* Badges */
+.badge {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.badge-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.badge-accent {
+  background: var(--accent);
+  color: white;
+}
+
+/* ===== ANIMATIONS SPÉCIFIQUES ===== */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40%, 43% {
+    transform: translateY(-3px);
+  }
+  70% {
+    transform: translateY(-1px);
+  }
+}
+
+.bounce {
+  animation: bounce 1s ease infinite;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .navbar-nav {
+    margin-top: 0.5rem;
+    background: rgba(59, 130, 246, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius);
+    padding: 0.5rem;
+  }
+  
+  .nav-item {
+    margin-bottom: 0.2rem;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  
+  .equipements-zone {
+    grid-column: 1;
+  }
+  
+  .reservation-form.small {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+  
+  .table {
+    font-size: 0.7rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 0.2rem 0.4rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+  
+  .navbar-brand h1 {
+    font-size: 1.1rem;
+  }
+  
+  .reservation-form.small {
+    padding: 0.8rem;
+  }
+  
+  .container {
+    width: min(100% - 1rem, var(--max-width));
+  }
+}
+
+/* Style pour les statuts */
+.status-active {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.status-pending {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.status-inactive {
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+.compact-admin * {
+    font-size: 0.9rem !important;
+}
+
+.compact-admin .form-control,
+.compact-admin .form-select,
+.compact-admin .btn {
+    padding: 4px 8px !important;
+    font-size: 0.85rem !important;
+}
+
+.compact-admin .card {
+    padding: 10px !important;
+}
+
+.compact-admin h2, 
+.compact-admin h5, 
+.compact-admin h6 {
+    font-size: 1rem!important;
+}
+
+.compact-admin .list-group-item {
+    padding: 6px 10px !important;
+}

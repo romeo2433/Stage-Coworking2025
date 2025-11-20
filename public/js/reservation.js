@@ -74,3 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
     dureeInput.addEventListener('input', () => { updateDateFin(); calculerTotal(); });
     equipementCheckboxes.forEach(cb => cb.addEventListener('change', calculerTotal));
 });
+
+
+

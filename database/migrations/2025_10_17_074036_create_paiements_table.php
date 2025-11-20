@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('Reference', 50);
             $table->decimal('montant_payer', 15, 2);
             $table->decimal('montant_Impayer', 15, 2)->nullable();
-            $table->date('date_paiement');
+            $table->date('date_paiement')->nullable();
             $table->enum('statut_paiement', ['en_attente', 'paye', 'partiel']);
             
             $table->unsignedBigInteger('Id_Reservation');

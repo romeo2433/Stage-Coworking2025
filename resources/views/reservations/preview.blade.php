@@ -32,6 +32,9 @@
     <form action="{{ route('types_espaces.index') }}" method="GET" style="display:inline-block">
         <button type="submit" class="btn btn-danger">Annuler</button>
     </form>
+    <form action="{{ route('reservations.create', ['Id_Espace' => $espace->Id_Espace])}}" method="GET" style="display:inline-block">
+        <button type="submit" class="bi bi-credit-card">Modifier</button>
+    </form>
 </div>
 <link rel="stylesheet" href="{{ asset('css/reservation.css') }}">
 @endsection

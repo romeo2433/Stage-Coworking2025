@@ -9,6 +9,12 @@
     color: #333;
     min-height: 100vh;
 }
+.container {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
 
 /* --- Conteneur global --- */
 .dashboard-container {
@@ -66,16 +72,17 @@
 }
 
 /* ============================================================
-   🧱 MAIN CONTENT
+    MAIN CONTENT
    ============================================================ */
-#main-content {
+   #main-content {
     flex-grow: 1;
     padding: 30px;
-    background-image: url('/storage/espaces/fond4.jpg');
+    background: linear-gradient(120deg, #e0e7ff 0%, #f8fafc 60%, #c7d2fe 100%);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
+    min-height: 100vh;
 }
 
 /* --- Couche transparente pour lisibilité du texte --- */
@@ -83,10 +90,11 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.445);
-    backdrop-filter: blur(4px);
+    background: rgba(255, 255, 255, 0.35); /* couche blanche légère */
+    backdrop-filter: blur(6px);             /* blur doux pour le style */
     z-index: 0;
 }
+
 
 /* --- Contenu au-dessus du fond --- */
 #main-content > * {

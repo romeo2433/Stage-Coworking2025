@@ -12,6 +12,16 @@
         alt="{{ $espace->Nom }}"
         style="height: 220px; object-fit: cover; border-radius: 10px 10px 0 0;">
 
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form action="{{ route('reservations.store') }}" method="POST">
         @csrf
         <input type="hidden" name="Id_Espace" value="{{ $espace->Id_Espace }}">

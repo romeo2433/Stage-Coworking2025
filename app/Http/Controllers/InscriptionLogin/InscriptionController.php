@@ -16,7 +16,6 @@ class InscriptionController extends Controller
     {
         return view('inscription.create'); 
     }
-
     // Traitement du formulaire
     public function store(Request $request)
     {
@@ -52,18 +51,13 @@ class InscriptionController extends Controller
     return redirect()->route('connexion.create')
                      ->with('success', 'Inscription réussie ! Un SMS de confirmation a été envoyé.');
 
-    }
-
-
-
-    
-    
+    } 
+    //Mamorona admnin   
     public function createAdmin()
     {
         return view('inscription.admin');
     }
-
-    
+    //Authentification Admin
     public function storeAdmin(Request $request)
     {
         $validatedData = $request->validate([

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->dateTime('date_fin');
             $table->integer('duree_heures');
             $table->integer('total');
-            $table->enum('Statut_Reservation', ['en_attente','confirmee','annulee','terminee','partiellement_payee','en_attente_de_paiement']);
+            $table->enum('Statut_Reservation', ['en_attente','confirmee','annulee','terminee','payee','en_attente_de_paiement']);
             
             // clés étrangères (nullable si optionnelles)
             $table->unsignedBigInteger('Id_Abonnement')->nullable();

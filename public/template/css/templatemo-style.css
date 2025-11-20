@@ -12,8 +12,8 @@ html {
 }
 body {
   font-family: Roboto, Helvetica, Arial, sans-serif;
-  background-color: #4e657a;
-  overflow-x: hidden;
+  background-color: #f8fafc;
+  color: #1e293b;
 }
 a {
   transition: all 0.3s ease;
@@ -30,7 +30,7 @@ button:focus {
   align-items: center;
 }
 .tm-site-icon {
-  color: #656565;
+  color: #facc15;
 }
 .tm-site-title {
   display: inline-block;
@@ -41,7 +41,7 @@ button:focus {
 }
 .navbar {
   height: 100px;
-  background-color: #567086;
+  background-color:  #2563eb;
   padding: 0;
 }
 .navbar .container {
@@ -202,13 +202,13 @@ button:focus {
   font-size: 90%;
 }
 .table {
-  background-color: #50697f;
+  background-color: #7072eb;
   color: #fff;
-  font-size: 85%;
+  font-size: 60%;
   margin-bottom: 0;
 }
 thead {
-  background-color: #486177;
+  background-color: #053157;
   color: #fff;
 }
 .table thead th {

@@ -11,20 +11,24 @@ class ReservationApiController extends Controller
 {
     public function index()
 {
-    // Récupère toutes les réservations sauf celles annulées
     $reservations = Reservation::with('espace.typeEspace')
-                    ->where('Statut_Reservation', '!=', 'annulée')
-                    ->get();
+        ->where('Statut_Reservation', '!=', 'annulée')
+        ->get();
 
     return $reservations->map(function ($r) {
+        $espace = $r->espace;
+        $type = $espace?->typeEspace;
+
         return [
-            'title' => $r->espace->Nom . ' (' . $r->espace->typeEspace->Type_Espace . ')',
+            'title' => ($espace?->Nom ?? 'Espace inconnu') . 
+                       ' (' . ($type?->Type_Espace ?? 'Type inconnu') . ')',
             'start' => $r->date_debut,
             'end'   => $r->date_fin,
-            'color' => '#28a745', 
+            'color' => '#28a745',
         ];
     });
 }
+
 
     
 

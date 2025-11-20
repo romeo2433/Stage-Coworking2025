@@ -14,12 +14,12 @@
     <div class="d-flex flex-wrap justify-content-center gap-3 mb-5 filters-bar">
         @foreach($types as $type)
             <button type="button" 
-                    class="btn btn-outline-primary btn-lg px-4 py-2 type-filter" 
+                class="btn btn-outline-warning btn-lg px-4 py-2 type-filter"
                     data-type-id="{{ $type->Id_Type }}">
                 {{ $type->Type_Espace }}
             </button>
         @endforeach
-        <button type="button" class="btn btn-primary btn-lg px-4 py-2 type-filter" data-type-id="all">
+        <button type="button" class="btn btn-outline-warning btn-lg px-4 py-2 type-filter" data-type-id="all">
             Tous les espaces
         </button>
     </div>

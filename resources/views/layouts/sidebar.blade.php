@@ -28,7 +28,7 @@
             </a>
           </li><!-- End Calendrier Nav -->        
 
-        <li class="nav-heading">Administration</li>
+       
 
         <li class="nav-item">
             <a class="nav-link collapsed" href="{{ route('connexion.create') }}">
@@ -40,17 +40,50 @@
 </aside>
 <style>
    /* ----- Style desktop (inchangé) ----- */
-.sidebar {
-  width: 250px;
-  position: fixed;
-  top: 60px;
-  left: 0;
-  height: calc(100vh - 60px);
-  background-color: #fff;
-  transition: transform 0.3s ease;
-  z-index: 1000;
-  box-shadow: 0 0 10px rgba(165, 34, 34, 0.507);
+   .sidebar {
+  background: rgba(150, 170, 34, 0.9); /* bleu foncé semi-transparent */
+  backdrop-filter: blur(5px);         /* effet de verre */
+  box-shadow: 0 8px 32px 0 rgba(203, 224, 11, 0.15);
+  border-radius: 20px 0 20px 0;
+  animation: fadeInLeft 0.7s;
+  width: 270px;
 }
+@keyframes fadeInLeft {
+  0% { transform: translateX(-40px); opacity: 0;}
+  100% { transform: translateX(0); opacity: 1;}
+}
+.sidebar-nav .nav-link {
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: #f7fafc;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active {
+  background: linear-gradient(90deg, #3b82f6 24%, #a6e7ff 88%);
+  color: #233876;
+  transform: translateX(8px) scale(1.05);
+  box-shadow: 0 2px 15px rgba(22, 67, 178, 0.07);
+}
+.sidebar-nav i {
+  background: #f0f3fa;
+  color: #2563eb;
+  border-radius: 50%;
+  padding: 7px;
+  margin-right: 12px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.sidebar-nav .nav-link:hover i {
+  background: #233876;
+  color: #fff;
+}
+
+
+
 
 .main-content {
   margin-left: 250px;
@@ -135,7 +168,7 @@ body.dark-mode a {
   document.body.appendChild(overlay);
 
   toggleBtn.addEventListener("click", () => {
-    console.log("Toggle click"); // Vérifie dans la console mobile
+    console.log("Toggle click"); 
     sidebar.classList.toggle("active");
     overlay.classList.toggle("active");
   });

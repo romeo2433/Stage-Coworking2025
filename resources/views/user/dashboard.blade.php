@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Tableau de bord')
+@section('title', 'Profil')
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/profil.css') }}">
 <div class="container">
     <h2>Bienvenue sur votre espace client</h2>
 

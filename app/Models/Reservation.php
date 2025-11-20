@@ -14,7 +14,7 @@ class Reservation extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'reference',
+        'Reference',
         'date_debut',
         'date_fin',
         'duree_heures',
@@ -61,5 +61,10 @@ class Reservation extends Model
     {
         return $this->hasMany(Paiement::class, 'Id_Reservation', 'Id_Reservation');
     }
+    public function checkin()
+    {
+        return $this->hasOne(\App\Models\Checkin::class, 'Id_Reservation', 'Id_Reservation');
+    }
+
 
 }
