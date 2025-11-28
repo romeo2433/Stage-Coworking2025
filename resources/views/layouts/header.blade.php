@@ -11,16 +11,16 @@
   <meta content="" name="keywords">
 
  <!-- Favicons -->
-<link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
-<link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+<link href="/assets/img/favicon.png" rel="icon">
+<link href="/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
 <!-- Vendor CSS Files -->
 
-<link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
+<link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+<link href="/assets/css/style.css" rel="stylesheet">
 
 
   <!-- Template Main CSS File -->
@@ -49,7 +49,7 @@
    
     <!-- Mention Chambre de Commerce -->
     <div class="ms-auto">
-      <img src="{{ asset('assets/img/ccia.png') }}" alt="Logo" class="logo-img">
+      <img src="/assets/img/ccia.png" alt="Logo" class="logo-img">
     </div>
     <!-- Barre de recherche 
     <div class="search-bar me-3 d-none d-md-flex">

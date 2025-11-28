@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Paiement;
 use App\Models\Reservation;
 use App\Models\Espace;
+use App\Models\Mode;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -77,8 +78,32 @@ class AdminPaiementController extends Controller
 
         $paiements = $query->orderBy('created_at', 'desc')->get();
         $totalPaid = $paiements->sum('montant_payer');
-        return view('admin.paiements.index', compact('paiements', 'espaces', 'totalPaid'));
-    }
+          // Partie Réservations
+    // -------------------------
+    $queryRes = Reservation::with('utilisateur', 'espace')
+    ->where('Statut_Reservation', 'confirmee');
+
+if ($request->filled('reference')) {
+    $queryRes->where('Reference', 'like', '%' . $request->reference . '%');
+}
+
+if ($request->filled('nom_utilisateur')) {
+    $queryRes->whereHas('utilisateur', function ($q) use ($request) {
+        $q->where('Nom', 'like', '%'.$request->nom_utilisateur.'%')
+          ->orWhere('Prenom', 'like', '%'.$request->nom_utilisateur.'%');
+    });
+        }
+
+        $reservations = $queryRes->orderBy('created_at', 'desc')->get();
+        $modes = Mode::all();
+        return view('admin.finance.index', compact(
+            'paiements',
+            'espaces',
+            'totalPaid',
+            'reservations',
+            'modes'
+        ));
+        }
     
 
     public function payer(Request $request, $reservation_id)
@@ -127,7 +152,7 @@ class AdminPaiementController extends Controller
         }
     
         return redirect()
-            ->route('admin.planning.profil')
+            ->route('admin.reservations.index')
             ->with('success', 'Paiement traité ! La facture est disponible.');
     }
     

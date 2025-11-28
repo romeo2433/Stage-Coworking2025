@@ -12,7 +12,7 @@ class EquipementController extends Controller
     public function index()
     {
         $types = TypeEquipement::orderBy('Type')->get();
-        $typesEquipements = $types; // alias attendu par la vue
+        $typesEquipements = $types; 
     
         $equipements = Equipement::with('type')->orderBy('nom')->get();
     
@@ -42,6 +42,7 @@ class EquipementController extends Controller
             $request->validate([
                 'nom' => 'required|string|max:255|unique:equipements,nom,' . $id . ',Id_Equipement',
                 'prix' => 'required|numeric|min:0',
+                'Etat' => 'required|in:OK,En_panne',
                 //'Id_Type' => 'required|exists:type_equipements,Id_Type',
             ]);
 
@@ -49,10 +50,13 @@ class EquipementController extends Controller
             $equipement->update([
                 'nom' => $request->nom,
                 'prix' => $request->prix,
+                'Etat' => $request->Etat,
                 //'Id_Type' => $request->Id_Type,
             ]);
+
             return back()->with('success', 'Équipement modifié avec succès !');
-        }   
+        }
+
     public function destroy($id)
         {
             $equipement = Equipement::findOrFail($id);

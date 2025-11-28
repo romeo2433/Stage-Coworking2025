@@ -1,33 +1,50 @@
 document.addEventListener('DOMContentLoaded', function() {
     const espaceSelect = document.getElementById('Id_Espace');
     const equipementsContainer = document.getElementById('equipements-container');
-    const dureeInput = document.getElementById('duree');
+    const dureeHeureInput = document.getElementById('duree');
+    const dureeJourInput = document.getElementById('duree_jour');
+    const dureeMoisInput = document.getElementById('duree_mois');
     const totalInput = document.getElementById('total');
     const totalHidden = document.getElementById('total_hidden'); 
     const dateInput = document.getElementById('date_debut');
     const heureSelect = document.getElementById('heure_debut');
+    const abonnementSelect = document.getElementById('Id_Abonnement');
 
     let tarifHoraire = 0;
     let equipements = [];
 
-    // 🔹 Calcul du total (espace + équipements)
+    // Fonction de calcul du total
     function calculerTotal() {
-        const duree = parseFloat(dureeInput.value) || 0;
-        let total = tarifHoraire * duree;
+        let total = 0;
 
+        // Total équipements
         equipements.forEach(e => {
             if (e.checkbox.checked) {
                 total += parseFloat(e.prix);
             }
         });
 
-        totalInput.value = total.toLocaleString('fr-FR') + ' Ar';
-        if (totalHidden) {
-            totalHidden.value = Math.round(total);
+        // Vérifier si un abonnement est choisi
+        const selectedAbo = abonnementSelect.selectedOptions[0];
+        const typeAbo = selectedAbo?.dataset?.type || '';
+        const tarifJournalier = parseFloat(selectedAbo?.dataset?.tarif_journalier || 0);
+        const tarifMensuel = parseFloat(selectedAbo?.dataset?.tarif_mensuel || 0);
+
+        if(typeAbo === 'journalier') {
+            total += tarifJournalier * parseInt(dureeJourInput.value || 0);
+        } else if(typeAbo === 'mensuel') {
+            total += tarifMensuel * parseInt(dureeMoisInput.value || 0);
+        } else {
+            // Aucun abonnement → tarif horaire
+            total += tarifHoraire * parseFloat(dureeHeureInput.value || 0);
         }
+
+        // Affichage
+        totalInput.value = total.toLocaleString('fr-FR') + ' Ar';
+        if(totalHidden) totalHidden.value = Math.round(total);
     }
 
-    // 🔹 Charger les équipements et tarif horaire selon l’espace
+    // Charger les équipements et tarif horaire selon l’espace
     function chargerEquipements() {
         const espaceId = espaceSelect.value;
 
@@ -42,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`/admin/espaces/${espaceId}/details`)
             .then(res => res.json())
             .then(data => {
-                tarifHoraire = parseFloat(data.tarif_horaire) || 0;
+                tarifHoraire = parseFloat(data.tarif_horaire || 0);
 
                 equipementsContainer.innerHTML = `
                     <p><strong>Tarif horaire :</strong> ${tarifHoraire.toLocaleString('fr-FR')} Ar</p>
@@ -89,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // 🔹 Charger les heures disponibles
+    // Charger les heures disponibles
     function chargerHeuresDisponibles() {
         const espaceId = espaceSelect.value;
         const date = dateInput.value;
@@ -109,10 +126,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!data.disponibles || data.disponibles.length === 0) {
                     const opt = document.createElement('option');
                     opt.disabled = true;
-                    opt.selected = true; // sélectionne l'option non disponible
+                    opt.selected = true;
                     opt.textContent = "Aucune heure disponible";
                     heureSelect.appendChild(opt);
-                    heureSelect.disabled = true; // désactive le select entier
+                    heureSelect.disabled = true;
                     return;
                 }
     
@@ -127,14 +144,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Erreur lors du chargement des heures:', err);
             });
     }
+
+    function verifierHeureDispo() {
+        const selectedAbo = abonnementSelect.selectedOptions[0];
+        const typeAbo = selectedAbo?.dataset?.type || '';
+    
+        if (typeAbo === 'journalier' || typeAbo === 'mensuel') {
+            heureSelect.value = '';
+            heureSelect.disabled = true;
+        } else {
+            heureSelect.disabled = false;
+            chargerHeuresDisponibles();
+        }
+    }
+    
+    // Appeler cette fonction à chaque changement d'abonnement
+    abonnementSelect.addEventListener('change', () => {
+        calculerTotal();
+        verifierHeureDispo();
+    });
     
 
-    // 🔄 Événements
+    // Événements
     espaceSelect.addEventListener('change', function() {
         chargerEquipements();
         chargerHeuresDisponibles();
     });
 
     dateInput.addEventListener('change', chargerHeuresDisponibles);
-    dureeInput.addEventListener('input', calculerTotal);
+    dureeHeureInput.addEventListener('input', calculerTotal);
+    dureeJourInput.addEventListener('input', calculerTotal);
+    dureeMoisInput.addEventListener('input', calculerTotal);
+    abonnementSelect.addEventListener('change', calculerTotal);
+
+    // Initialisation
+    chargerEquipements();
 });

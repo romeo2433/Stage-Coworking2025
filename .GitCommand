@@ -1,0 +1,7 @@
+Comment mettre les projets existant  dans git 
+* git status * : 
+ Ce que tu vas voir :modified: fichier(s) modifié(s)   ; untracked: fichier(s) nouveaux ;deleted: fichier(s) supprimés
+
+Ajouter les fichiers modifiés::  git add .
+Faire un commit::  git commit -m "Update fichiers"
+Envoyer vers GitHub / GitLab:: git push

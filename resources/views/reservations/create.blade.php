@@ -65,6 +65,6 @@
     </form>
 </div>
 
-<script src="{{ asset('js/reservation.js') }}"></script>
-<link rel="stylesheet" href="{{ asset('css/reservation.css') }}">
+<script src="/js/reservation.js"></script>
+<link rel="stylesheet" href="/css/reservation.css">
 @endsection

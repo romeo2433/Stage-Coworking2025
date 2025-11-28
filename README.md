@@ -4,7 +4,8 @@ MySQL
 
 bash ::: 
     php -v
-    composer -V
+    composer -v
+    si pas encore installer d abord composer 
 
 Puis Creation du projet Laravel
     composer create-project laravel/laravel coworking-app
@@ -49,6 +50,10 @@ Vider la cache
     php artisan config:clear
     php artisan cache:clear
     php artisan route:clear
+    php artisan view:clear
+    php artisan event:clear
+    php artisan optimize:clear
+
 
 Mettre a jour le composer 
     composer dump-autoload
@@ -83,3 +88,37 @@ lsb-release : Affiche les informations sur la distribution Linux utilisée (util
 
 
     curl -fsSL https://download.docker.com/linux/debian/gpg
+
+
+
+
+
+
+
+
+Installation cloudflared
+    winget install --id Cloudflare.cloudflared
+
+Faire marcher en prod  
+    cloudflared tunnel --url http://127.0.0.1:8000
+
+
+
+
+
+a mettre dans 
+    start.bat::
+        Vider tout les caches 
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan event:clear
+            php artisan optimize:clear
+
+        start mysql dans xampp
+            mysqld --skip-grant-tables
+        Demarrer Laravel
+            php artisan serve 
+        Demarrer le production cloudflared
+            cloudflared tunnel --url http://127.0.0.1:8000

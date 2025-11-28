@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             ModeSeeder::class,
             ProfilsSeeder::class,
             UtilisateurSeeder::class,
+            AbonnementsEtTypesSeeder::class,
         ]);
     }
 }

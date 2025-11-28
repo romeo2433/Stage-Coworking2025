@@ -87,7 +87,7 @@ class PlanningController extends Controller
             $checkin->update(['heure_sortie' => now()->format('H:i:s')]);
         
             // Mettre à jour le statut de la réservation
-            $reservation->update(['Statut_Reservation' => 'payee','terminee','confirmee']);
+            $reservation->update(['Statut_Reservation' => 'terminee']);
         
             return redirect()->back()->with('success', 'Check-out effectué avec succès.');
         }
@@ -107,11 +107,17 @@ class PlanningController extends Controller
             // Récupérer toutes les réservations pour cette date et cet espace
             $reservations = Reservation::where('Id_Espace', $id)
                 ->where(function($query) use ($date) {
-                    $query->whereDate('date_debut', $date)
-                          ->orWhereDate('date_fin', $date);
+
+                    $startOfDay = $date . ' 00:00:00';
+                    $endOfDay   = $date . ' 23:59:59';
+
+                    // toute réservation qui chevauche la journée
+                    $query->where('date_debut', '<', $endOfDay)
+                        ->where('date_fin', '>', $startOfDay);
                 })
                 ->whereIn('Statut_Reservation', ['en_attente', 'confirmee', 'terminee','payee'])
                 ->get(['date_debut', 'date_fin']);
+
         
             // DEBUG: Vérifiez ce qui est récupéré
             Log::info('Réservations trouvées pour espace ' . $id . ' à la date ' . $date . ':', $reservations->toArray());

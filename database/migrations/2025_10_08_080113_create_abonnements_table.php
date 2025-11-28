@@ -10,7 +10,13 @@ return new class extends Migration {
         Schema::create('abonnements', function (Blueprint $table) {
             $table->id('Id_Abonnement');
             $table->string('Nom_Abonnement', 50);
-            $table->enum('Status_Abonnement', ['actif','inactif','suspendu']);
+
+            $table->enum('Status_Abonnement', ['actif','inactif','suspendu'])
+                  ->default('actif');
+
+            $table->enum('Type_Abonnement', ['journalier', 'mensuel'])
+                  ->default('journalier');
+
             $table->timestamps();
         });
     }

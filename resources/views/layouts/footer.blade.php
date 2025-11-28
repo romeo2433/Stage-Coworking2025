@@ -13,22 +13,7 @@
 </a>
 
 <!-- JS -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const toggleBtn = document.querySelector('.toggle-sidebar-btn');
-  const sidebar = document.querySelector('.sidebar');
-  const footer = document.querySelector('.footer');
-  const content = document.querySelector('.main-content');
 
-  if (toggleBtn && sidebar && content && footer) {
-    toggleBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('closed');
-      content.classList.toggle('expanded');
-      footer.classList.toggle('expanded');
-    });
-  }
-});
-</script>
 
 <style>
 /* --- FOOTER SIMPLE ET FLUIDE --- */

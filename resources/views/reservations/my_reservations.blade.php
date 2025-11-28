@@ -3,7 +3,7 @@
 @section('title', 'Mes Réservations')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/reservation-animations.css') }}">
+<link rel="stylesheet" href="/css/reservation-animations.css">
 
 <div class="container">
     <h2>Mes Réservations</h2>
@@ -74,6 +74,6 @@
     @endif
 </div>
 
-<script src="{{ asset('js/reservation-animations.js') }}"></script>
+<script src="/js/reservation-animations.js"></script>
 @endsection
 

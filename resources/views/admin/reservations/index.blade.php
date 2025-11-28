@@ -108,8 +108,10 @@
                         <th>Date fin</th>
                         <th>Durée</th>
                         <th>Statut</th>
+                        <th>Check-in / Check-out</th>  
                     </tr>
                 </thead>
+        
                 <tbody>
                     @forelse($historique as $h)
                         <tr>
@@ -117,7 +119,20 @@
                             <td>{{ $h->espace?->Nom }}</td>
                             <td>{{ $h->date_debut }}</td>
                             <td>{{ $h->date_fin }}</td>
-                            <td>{{ $h->duree_heures }} h</td>
+                            <td>
+                                {{ $h->duree_heures }}
+                                @if($h->abonnement)
+                                    @if($h->abonnement->Type_Abonnement === 'journalier')
+                                        jour(s)
+                                    @elseif($h->abonnement->Type_Abonnement === 'mensuel')
+                                        mois
+                                    @else
+                                        h
+                                    @endif
+                                @else
+                                    h
+                                @endif
+                            </td>                            
                             <td>
                                 @switch($h->Statut_Reservation)
                                     @case('confirmee')
@@ -130,7 +145,7 @@
                                         <span class="badge bg-secondary">Terminée</span>
                                         @break
                                     @case('payee')
-                                        <span class="badge bg-warning">Payer</span>
+                                        <span class="badge bg-warning">Payée</span>
                                         @break
                                     @case('annulee')
                                         <span class="badge bg-danger">Annulée</span>
@@ -139,18 +154,56 @@
                                         <span class="badge bg-dark">Inconnu</span>
                                 @endswitch
                             </td>
+        
                             
+                            <td>
+                                @php
+                                    // Récupère le checkin lié à la réservation
+                                    $checkin = \App\Models\Checkin::where('Id_Reservation', $h->Id_Reservation)->first();
+                                @endphp
+                            
+                                {{--  BOUTON CHECK-IN --}}
+                                @if(!$checkin)
+                                    <form action="{{ route('admin.planning.checkin', $h->Id_Reservation) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-primary mb-1">
+                                            <i class="fas fa-sign-in-alt"></i> Check-in
+                                        </button>
+                                    </form>
+                            
+                                {{--  AFFICHAGE HEURE ARRIVÉE --}}
+                                @else
+                                    <span class="badge bg-success mb-1">
+                                        <i class="fas fa-clock"></i> Arrivé à {{ \Carbon\Carbon::parse($checkin->heure_arrivee)->format('H:i') }}
+                                    </span>
+                                @endif
+                            
+                                <br>
+                             
+                                @if($checkin && !$checkin->heure_sortie)
+                                    <form action="{{ route('admin.planning.checkout', $h->Id_Reservation) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-danger mb-1"
+                                            @if($h->Statut_Reservation !== 'payee') disabled title="La réservation n'est pas encore payée" @endif>
+                                            <i class="fas fa-sign-out-alt"></i> Check-out
+                                        </button>
+                                    </form>
+                              
+                                @elseif($checkin && $checkin->heure_sortie)
+                                    <span class="badge bg-danger mb-1">
+                                        <i class="fas fa-clock"></i> Sorti à {{ \Carbon\Carbon::parse($checkin->heure_sortie)->format('H:i') }}
+                                    </span>
+                                @endif
+                            </td>                            
                         </tr>
+        
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted">Aucune réservation dans l’historique</td>
+                            <td colspan="7" class="text-center text-muted">Aucune réservation dans l’historique</td>
                         </tr>
                     @endforelse
                 </tbody>
+        
             </table>
         </div>
-    </div>
-</div>
-
-
 @endsection

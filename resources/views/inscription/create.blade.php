@@ -7,10 +7,10 @@
             <title>Connexion Client</title>
         
             <!-- Bootstrap CSS -->
-            <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+            <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         
             <!-- Formulaires CSS -->
-            <link href="{{ asset('assets/css/forms.css') }}" rel="stylesheet">
+            <link href="/assets/css/forms.css" rel="stylesheet">
         </head>    
     </head>
     
@@ -80,6 +80,6 @@
         </div>
     </main>
 
-    <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

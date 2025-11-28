@@ -1,24 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+  const calendarEl = document.getElementById('calendar');
+
+  const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       locale: 'fr',
       height: 650,
       headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
       events: calendarEventsUrl,
+
       dateClick: function(info) {
-        fetch(`/api/espaces-disponibles?date=${info.dateStr}`)
-          .then(r => r.json())
-          .then(data => {
-            alert('Espaces libres : ' + (data.length ? data.join(', ') : 'Aucun espace libre'));
-          });
+          fetch(`/api/espaces-disponibles?date=${info.dateStr}`)
+              .then(r => r.json())
+              .then(data => {
+
+                  const message = data.length
+                      ? "Espaces libres :<br><b>" + data.join(', ') + "</b>"
+                      : "Aucun espace libre pour cette date.";
+
+                  Swal.fire({
+                      title: info.dateStr,
+                      html: message,
+                      icon: data.length ? 'success' : 'warning'
+                  });
+
+              });
       }
-    });
-  
-    calendar.render();
   });
-  
+
+  calendar.render();
+});

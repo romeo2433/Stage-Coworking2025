@@ -61,13 +61,12 @@ Route::middleware(['check.utilisateur.connecte'])->group(function () {
     Route::post('/reservation/preview', [ReservationController::class, 'preview'])->name('reservations.preview');
     Route::post('/reservation/confirm', [ReservationController::class, 'confirm'])->name('reservations.confirm');
     Route::get('/mes-reservations', [ReservationController::class, 'myReservations'])->name('reservations.my');
-    Route::get('/mes-reservations', [ReservationController::class, 'myReservations'])->name('reservations.my');
-    Route::get('/espaces/{id}/disponibilites', [App\Http\Controllers\ReservationController::class, 'getDisponibilites'])
+    Route::get('/espaces/{id}/disponibilites', [ReservationController::class, 'getDisponibilites'])
         ->name('espaces.disponibilites');
 });
 
    
-    Route::get('/reservations', [ReservationApiController::class, 'index'])->name('api.reservations');
+Route::get('/reservations', [ReservationApiController::class, 'index'])->name('reservations.api');
     Route::get('/espaces-disponibles', [ReservationApiController::class, 'espacesDisponibles']);
     Route::get('/calendrier', [CalendrierController::class, 'index'])->name('calendrier.index');
 
@@ -96,18 +95,19 @@ Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function ()
         Route::post('reservations/{reservation}/reject', [\App\Http\Controllers\Admin\ReservationController::class, 'reject'])->name('reservations.reject');
         Route::get('espaces/{id}/heures-disponibles', [App\Http\Controllers\Admin\ReservationAdminController::class, 'heuresDisponibles']);
 
-        Route::get('/paiements', [AdminPaiementController::class, 'index'])->name('paiements.index');
-    //Route::post('/paiements/{id}/payer', [AdminPaiementController::class, 'payer'])->name('paiements.payer');
-    //Route::post('/paiements/{id}/annuler', [AdminPaiementController::class, 'annuler'])->name('paiements.annuler');
+       // Route::get('/paiements', [AdminPaiementController::class, 'index'])->name('paiements.index');
+   
     
     // Bouton Payer
-        Route::get('reservations/montre', [AdminReservationController::class, 'montre'])->name('reservations.montre');
+        //Route::get('reservations/montre', [AdminReservationController::class, 'montre'])->name('reservations.montre');
         Route::post('/reservations/{id}/payer', [AdminPaiementController::class, 'payer'])->name('reservations.payer'); 
-        //Route::put('paiements/{id}', [AdminPaiementController::class, 'update'])->name('paiements.update');
+        Route::get('finance', [AdminPaiementController::class, 'index'])->name('finance.index');
+        Route::get('paiements', [AdminPaiementController::class, 'index'])->name('paiements.index');
 
 
         Route::get('/reservations/create', [ReservationAdminController::class, 'create'])->name('reservations.create');
         Route::post('/reservations/store', [ReservationAdminController::class, 'store'])->name('reservations.store');
+        Route::post('/reservations/preview', [ReservationAdminController::class, 'preview'])->name('reservations.preview');
         Route::get('/espaces/{id}/details', [ReservationAdminController::class, 'espaceDetails']);
         Route::get('espaces/{id}/heures-disponibles', [ReservationAdminController::class, 'heuresDisponibles'])->name('espaces.heures-disponibles');
 
@@ -143,19 +143,24 @@ Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function ()
         Route::get('statistiques', [StatistiquesController::class, 'index'])->name('statistiques.index');   
     
     //Checkins
-        Route::get('/planning', [PlanningController::class, 'index'])->name('planning.profil');
-        Route::post('/planning/checkin/{reservation}', [PlanningController::class, 'checkin'])->name('planning.checkin');
-        Route::post('/planning/checkout/{reservation}', [PlanningController::class, 'checkout'])->name('planning.checkout');
+       // Route::get('planning', [PlanningController::class, 'index'])->name('planning.profil');
+        Route::post('planning/checkin/{reservation}', [PlanningController::class, 'checkin'])->name('planning.checkin');
+        Route::post('planning/checkout/{reservation}', [PlanningController::class, 'checkout'])->name('planning.checkout');
+        Route::get('planning/calendar', [PlanningController::class, 'calendar'])->name('planning.calendar');
 
    // CRUD Types d’équipements
-        Route::post('/equipements/type', [EquipementController::class, 'storeType'])->name('typesequipements.store');
-        Route::put('/equipements/type/{id}', [EquipementController::class, 'updateType'])->name('typesequipements.update');
-        Route::delete('/equipements/type/{id}', [EquipementController::class, 'destroyType'])->name('typesequipements.destroy');
-
-       
+        Route::post('equipements/type', [EquipementController::class, 'storeType'])->name('typesequipements.store');
+        Route::put('equipements/type/{id}', [EquipementController::class, 'updateType'])->name('typesequipements.update');
+        Route::delete('equipements/type/{id}', [EquipementController::class, 'destroyType'])->name('typesequipements.destroy');
     });
    
- 
-    Route::get('/admin/planning/calendar', [PlanningController::class, 'calendar'])
-    ->name('admin.planning.calendar');
+    Route::post('/admin/reservations/{id}/checkin', [PlanningController::class, 'checkin'])
+    ->name('admin.reservations.checkin');
+
+Route::post('/admin/reservations/{id}/checkout', [PlanningController::class, 'checkout'])
+    ->name('admin.reservations.checkout');
+
+   
+
+
     

@@ -7,7 +7,7 @@
     <title>@yield('title', 'Dashboard Admin')</title>
 
     <!-- CSS GLOBAL (hérité partout) -->
-    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+    <link rel="stylesheet" href="/css/main.css">
 
     <!-- Google Fonts (si tu veux) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -34,67 +34,83 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
+            
+                    <!-- Dashboard -->
                     <li class="nav-item mx-2">
-                        <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
-                            <i class="fas fa-tachometer-alt me-1"></i> Bienvenue 
+                        <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" 
+                           href="{{ route('admin.dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-1"></i> Bienvenue
                         </a>
                     </li>
+            
+                    <!-- Création client -->
                     <li class="nav-item mb-2">
                         <a href="{{ route('admin.utilisateurs.create') }}" 
                            class="nav-link {{ request()->routeIs('admin.utilisateurs.create') ? 'active' : '' }}">
-                            <i class="fas fa-user-plus me-2"></i> Créer un nouveau client
+                            <i class="fas fa-user-plus me-2"></i> Créer un client
                         </a>
                     </li>
+            
+                    <!-- Nouvelle réservation -->
                     <li class="nav-item mb-2">
-                        <a href="{{ route('admin.reservations.create') }}" class="nav-link {{ request()->routeIs('admin.reservations.create') ? 'active' : '' }}">
-                            <i class="fas fa-calendar-plus me-2"></i> Créer une réservation
+                        <a href="{{ route('admin.reservations.create') }}" 
+                           class="nav-link {{ request()->routeIs('admin.reservations.create') ? 'active' : '' }}">
+                            <i class="fas fa-calendar-plus me-2"></i> Nouvelle réservation
                         </a>
                     </li>
+            
+                    <!-- Réservations en attente -->
                     <li class="nav-item mx-2">
-                        <a class="nav-link {{ request()->routeIs('admin.reservations.index') ? 'active' : '' }}" href="{{ route('admin.reservations.index') }}">
+                        <a class="nav-link {{ request()->routeIs('admin.reservations.index') ? 'active' : '' }}" 
+                           href="{{ route('admin.reservations.index') }}">
                             <i class="far fa-user me-1"></i> Réservations en attente
                         </a>
                     </li>
+            
+                    <!-- PAGE FUSIONNÉE PAIEMENTS + RÉSERVATIONS PAYÉES -->
                     <li class="nav-item mx-2">
-                        <a class="nav-link {{ request()->routeIs('admin.reservations.montre') ? 'active' : '' }}" href="{{ route('admin.reservations.montre') }}">
-                            <i class="fas fa-hand-holding-usd me-1"></i> Paiements 
+                        <a class="nav-link {{ request()->routeIs('admin.finance.index') ? 'active' : '' }}" 
+                           href="{{ route('admin.finance.index') }}">
+                            <i class="fas fa-hand-holding-usd me-1"></i> Paiements
                         </a>
                     </li>
-                    <li class="nav-item mb-2">
-                        <a href="{{ route('admin.planning.profil') }}" 
-                           class="nav-link {{ request()->routeIs('admin.planning.profil') ? 'active' : '' }}">
-                            <i class="fas fa-calendar-day me-2"></i> Planning du jour
-                        </a>
-                    </li> 
+            
+                   
+            
+                    <!-- Planning général -->
                     <li class="nav-item mb-2">
                         <a href="{{ route('admin.planning.calendar') }}" 
                            class="nav-link {{ request()->routeIs('admin.planning.calendar') ? 'active' : '' }}">
                             <i class="fas fa-calendar-alt me-2"></i> Planning général
                         </a>
-                    </li>                       
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('admin.paiements.index') ? 'active' : '' }}" href="{{ route('admin.paiements.index') }}">
-                            <i class="fas fa-money-bill-wave me-2"></i> Historique des paiements
+                    </li>
+            
+                    <!-- Paramètres Espaces -->
+                    <li class="nav-item mb-2">
+                        <a href="{{ route('admin.espaces.photos') }}" 
+                           class="nav-link {{ request()->routeIs('admin.espaces.photos') ? 'active' : '' }}">
+                            <i class="fas fa-image me-2"></i> Paramètres d'Espaces
                         </a>
                     </li>
-                    <li class="nav-item mb-2">
-                        <a href="{{ route('admin.espaces.photos') }}" class="nav-link {{ request()->routeIs('admin.espaces.photos') ? 'active' : '' }}">
-                            <i class="fas fa-image me-2"></i> Parametre d'Espaces
-                        </a>
-                    </li> 
+            
+                    <!-- Statistiques -->
                     <li class="nav-item mb-2">
                         <a href="{{ route('admin.statistiques.index') }}" 
                            class="nav-link {{ request()->routeIs('admin.statistiques.index') ? 'active' : '' }}">
                             <i class="fas fa-chart-line me-2"></i> Statistiques
                         </a>
-                    </li>                   
+                    </li>
+            
+                    <!-- Déconnexion -->
                     <li class="nav-item mt-4">
                         <a class="nav-link text-danger" href="{{ route('logout') }}">
                             <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
                         </a>
-                    </li>                 
+                    </li>
+            
                 </ul>
             </div>
+            
         </div>
     </nav>
 
@@ -115,11 +131,11 @@
    
     
 
-    <!-- JS 
-    <script src="{{ asset('template/js/jquery-3.3.1.min.js') }}"></script>
+    <!-- JS Scripts spécifiques -->
+    <script src="/template/js/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-     Scripts spécifiques -->
+     
     @yield('scripts')
 </body>
 </html>

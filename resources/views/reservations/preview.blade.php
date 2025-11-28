@@ -36,5 +36,5 @@
         <button type="submit" class="bi bi-credit-card">Modifier</button>
     </form>
 </div>
-<link rel="stylesheet" href="{{ asset('css/reservation.css') }}">
+<link rel="stylesheet" href="/css/reservation.css">
 @endsection

@@ -25,9 +25,9 @@
 
 <!-- Injection d’une variable JS -->
 <script>
-  const calendarEventsUrl = "{{ route('api.reservations') }}";
+  const calendarEventsUrl = "/api/reservations";
 </script>
 
 <!-- Ton script séparé -->
-<script src="{{ asset('js/calendrier.js') }}"></script>
+<script src="/js/calendrier.js"></script>
 @endsection

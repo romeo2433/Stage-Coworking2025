@@ -64,5 +64,5 @@
 </script>
 
 {{-- Script externe --}}
-<script src="{{ asset('js/statistiques.js') }}"></script>
+<script src="/js/statistiques.js"></script>
 @endsection

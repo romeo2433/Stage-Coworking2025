@@ -5,6 +5,8 @@
 @section('content')
 <div class="reservation-wrapper">
 
+    
+
     {{-- Liste des utilisateurs --}}
     <div class="mb-3">
         <h4 class="fw-bold">Choisir un client :</h4>
@@ -18,6 +20,7 @@
             @endforeach
         </ul>
     </div>
+    
 
     {{-- Formulaire de réservation --}}
     <div class="reservation-form small mt-3" style="display:none;">
@@ -35,7 +38,7 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.reservations.store') }}" method="POST">
+        <form action="{{ route('admin.reservations.preview') }}" method="POST">
             @csrf
             <div class="form-grid">
                 {{-- E-mail rempli automatiquement --}}
@@ -43,6 +46,22 @@
                     <label class="form-label fw-bold">E-mail</label>
                     <input type="email" name="email_client" id="email_client" class="form-control form-control-sm" required>
                 </div>
+        
+                <div>
+                    <label class="form-label fw-bold">Abonnement</label>
+                    <select name="Id_Abonnement" id="Id_Abonnement" class="form-select form-select-sm">
+                        <option value="">-- Aucun abonnement --</option>
+                        @foreach($abonnements as $abo)
+                            <option value="{{ $abo->Id_Abonnement }}"
+                                    data-type="{{ $abo->Type_Abonnement }}"
+                                    data-tarif_journalier="{{ $abo->tarif_journalier ?? 0 }}"
+                                    data-tarif_mensuel="{{ $abo->tarif_mensuel ?? 0 }}">
+                                {{ $abo->Nom_Abonnement }}
+                            </option>
+                        @endforeach
+                    </select>                    
+                </div>
+        
                 <div>
                     <label class="form-label fw-bold">Espace</label>
                     <select name="Id_Espace" id="Id_Espace" class="form-select form-select-sm" required>
@@ -52,34 +71,61 @@
                         @endforeach
                     </select>
                 </div>
+        
                 <div>
                     <label class="form-label fw-bold">Date</label>
                     <input type="date" name="date_debut" id="date_debut" class="form-control form-control-sm" required>
                 </div>
+        
                 <div>
                     <label class="form-label fw-bold">Heure</label>
                     <select name="heure_debut" id="heure_debut" class="form-select form-select-sm" required>
                         <option value="">-- Choisir --</option>
                     </select>
                 </div>
+        
+                {{-- Durée en heures --}}
                 <div>
                     <label class="form-label fw-bold">Durée (h)</label>
                     <input type="number" name="duree" id="duree" min="1" max="8" value="1" class="form-control form-control-sm" required>
                 </div>
+        
+                {{-- Durée en jours --}}
+                <div>
+                    <label class="form-label fw-bold">Durée (jours)</label>
+                    <input type="number" name="duree_jour" id="duree_jour" min="0" value="0" class="form-control form-control-sm">
+                </div>
+        
+                {{-- Durée en mois --}}
+                <div>
+                    <label class="form-label fw-bold">Durée (mois)</label>
+                    <input type="number" name="duree_mois" id="duree_mois" min="0" value="0" class="form-control form-control-sm">
+                </div>
+        
                 <div class="equipements-zone">
                     <label class="form-label fw-bold">Équipements</label>
                     <div id="equipements-container">
                         <p class="text-muted small">Sélectionnez un espace pour voir la liste.</p>
                     </div>
                 </div>
+        
                 <div>
                     <label class="form-label fw-bold">Total (Ar)</label>
                     <input type="text" id="total" class="form-control form-control-sm" readonly value="0 Ar">
                     <input type="hidden" name="total" id="total_hidden" value="0">
                 </div>
             </div>
-            <button type="submit" class="btn btn-success w-100 btn-sm mt-2">Créer la réservation</button>
+        
+            {{-- Nouveaux boutons --}}
+           
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-success w-100 btn-sm">
+                         Créer directement
+                    </button>
+                </div>
+</div>
         </form>
+        
     </div>
 </div>
 {{-- Script pour pré-remplir le mail et afficher le formulaire --}}
@@ -94,5 +140,5 @@
         });
     });
 </script>
-<script src="{{ asset('js/AdminReservation.js') }}"></script>
+<script src="/js/AdminReservation.js"></script>
 @endsection

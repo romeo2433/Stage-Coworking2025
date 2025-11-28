@@ -102,9 +102,9 @@
     </div>
 </div>
 
-{{-- ✅ Liens CSS et JS externes --}}
-<link rel="stylesheet" href="{{ asset('css/types-espaces.css') }}">
-<script src="{{ asset('js/types-espaces.js') }}"></script>
+{{--  Liens CSS et JS externes --}}
+<link rel="stylesheet" href="/css/types-espaces.css">
+<script src="/js/types-espaces.js"></script>
 
 {{-- CDN pour les animations --}}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
