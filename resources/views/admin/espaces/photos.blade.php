@@ -63,6 +63,9 @@
                                 <p class="small mb-1">
                                     <strong>Capacité :</strong> {{ $espace->capacite }} pers
                                 </p>
+                                <p class="small mb-1">
+                                    <strong>Capacité :</strong> {{ $espace->quantite }} chbr
+                                </p>
 
                                 {{-- Formulaire de changement photo --}}
                                 <form action="{{ route('admin.espaces.updatePhoto', $espace->Id_Espace) }}"
@@ -84,7 +87,6 @@
                                        class="btn btn-primary btn-sm w-50">
                                         Modifier
                                     </a>
-
                                     <form action="{{ route('admin.espaces.destroy', $espace->Id_Espace) }}"
                                           method="POST" class="w-50"
                                           onsubmit="return confirm('Supprimer cet espace ?')">

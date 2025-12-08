@@ -19,7 +19,7 @@ class AbonnementsEtTypesSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'Nom_Abonnement' => 'Abonnement Mensuel Premium',
+                'Nom_Abonnement' => 'Abonnement Mensuel',
                 'Status_Abonnement' => 'actif',
                 'Type_Abonnement' => 'mensuel',
                 'created_at' => now(),

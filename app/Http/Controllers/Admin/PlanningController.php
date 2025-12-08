@@ -20,7 +20,7 @@ class PlanningController extends Controller
         
             //  Récupère toutes les réservations (pas que celles du jour)
             $reservations = Reservation::with(['espace', 'utilisateur'])
-                ->orderBy('date_debut', 'asc')
+                ->orderBy('date_debut', 'desc')
                 ->get();
              
             //  Réservations du jour (pour le tableau)

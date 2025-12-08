@@ -14,8 +14,13 @@ class InscriptionController extends Controller
     // Affichage du formulaire
     public function create()
     {
-        return view('inscription.create'); 
+        $code = rand(100000, 999999); 
+
+        session(['captcha_code' => $code]);
+
+        return view('inscription.create', compact('code'));
     }
+
     // Traitement du formulaire
     public function store(Request $request)
     {
@@ -26,14 +31,16 @@ class InscriptionController extends Controller
             'Entreprise' => 'nullable|string|max:50',
             'email' => 'required|email|max:50',
             'password' => 'required|string|min:6',
-            'g-recaptcha-response' => 'required|captcha'
-        ],
-        [
-            'g-recaptcha-response.required' => 'Veuillez confirmer que vous n’êtes pas un robot.',
-            'g-recaptcha-response.captcha' => 'La vérification reCAPTCHA a échoué, veuillez réessayer.'
+            'captcha' => 'required'
         ]);
-
-    // Création de l'utilisateur 
+    
+        // Vérification du Captcha
+        if ($request->captcha != session('captcha_code')) {
+            return back()->withErrors(['captcha' => 'Code incorrect, veuillez recommencer.'])
+                         ->withInput();
+        }
+    
+        // Création user
         $utilisateur = Utilisateur::create([
             'numero' => $validatedData['numero'],
             'Prenom' => $validatedData['Prenom'],
@@ -42,16 +49,13 @@ class InscriptionController extends Controller
             'email' => $validatedData['email'],
             'password' => $request->password,
             'date_inscription' => Carbon::now()->toDateString(),
-            'Id_Profil' => 4, 
+            'Id_Profil' => 4,
         ]);
-
-        
-
-    // Redirection avec message de succès
-    return redirect()->route('connexion.create')
-                     ->with('success', 'Inscription réussie ! Un SMS de confirmation a été envoyé.');
-
-    } 
+    
+        return redirect()->route('connexion.create')
+                         ->with('success', 'Inscription réussie !');
+    }
+    
     //Mamorona admnin   
     public function createAdmin()
     {

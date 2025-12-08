@@ -1,3 +1,13 @@
+C:\Users\Romeo>composer -V
+Composer version 2.8.5 2025-01-21 15:23:40
+PHP version 8.2.12 (C:\xampp\php\php.exe)
+Run the "diagnose" command to get more detailed diagnostics output.
+ SELECT VERSION();
++-----------------+
+| VERSION()       |
++-----------------+
+ 10.4.32-MariaDB
+******************************************************************************************************
 Voir la version du composer et celui du php
 PHP ≥ 8.1
 MySQL
@@ -22,12 +32,12 @@ Installe le package Laravel pour reCAPTCHA pour connaissances robot :
     composer require biscolab/laravel-recaptcha
 Installe le package Laravel pour faire une export pdf 
     composer require barryvdh/laravel-dompdf
+Installe le package Laravel pour faire une export excel
+    composer require maatwebsite/excel
+
 
 php artisan migrate
 php artisan db:seed
-
-
-
 
 
 **********
@@ -122,3 +132,10 @@ a mettre dans
             php artisan serve 
         Demarrer le production cloudflared
             cloudflared tunnel --url http://127.0.0.1:8000
+
+
+
+
+
+
+

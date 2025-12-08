@@ -7,7 +7,7 @@ use App\Http\Controllers\TypeEspaceController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\Admin\AdminPaiementController;
 use App\Http\Controllers\PaiementController;
-use App\Http\Controllers\Admin\AdminReservationController;
+use App\Http\Controllers\CalendrierController;
 use App\Http\Controllers\EspaceController;
 use App\Http\Controllers\Admin\ReservationAdminController;
 use App\Http\Controllers\Admin\UserController;
@@ -15,14 +15,16 @@ use App\Http\Controllers\Admin\EquipementController;
 use App\Http\Controllers\Admin\StatistiquesController;
 use App\Http\Controllers\Admin\PlanningController;
 use App\Http\Controllers\Api\ReservationApiController;
-use App\Http\Controllers\CalendrierController;
-
+use App\Http\Controllers\Admin\EtatAnalytiqueController;
 
 
 // Routes publiques
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('connexion.create');
 });
+
+Route::get('/connexion', [ConnexionController::class, 'create'])->name('connexion.create');
+
 
 // Inscription
 Route::get('/inscription', [InscriptionController::class, 'create'])->name('inscription.create');
@@ -32,7 +34,6 @@ Route::get('/admin/inscription', [InscriptionController::class, 'createAdmin'])-
 Route::post('/admin/inscription', [InscriptionController::class, 'storeAdmin'])->name('admin.inscription.store');
 
 // Connexion
-Route::get('/connexion', [ConnexionController::class, 'create'])->name('connexion.create');
 Route::post('/connexion', [ConnexionController::class, 'store'])->name('connexion.store');
 
 
@@ -110,6 +111,7 @@ Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function ()
         Route::post('/reservations/preview', [ReservationAdminController::class, 'preview'])->name('reservations.preview');
         Route::get('/espaces/{id}/details', [ReservationAdminController::class, 'espaceDetails']);
         Route::get('espaces/{id}/heures-disponibles', [ReservationAdminController::class, 'heuresDisponibles'])->name('espaces.heures-disponibles');
+        Route::post('reservations/check-dispo', [ReservationAdminController::class, 'checkDispo']);
 
     //Upload Photo
         Route::get('/espaces/photos', [EspaceController::class, 'editPhotos'])->name('espaces.photos');
@@ -147,20 +149,20 @@ Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function ()
         Route::post('planning/checkin/{reservation}', [PlanningController::class, 'checkin'])->name('planning.checkin');
         Route::post('planning/checkout/{reservation}', [PlanningController::class, 'checkout'])->name('planning.checkout');
         Route::get('planning/calendar', [PlanningController::class, 'calendar'])->name('planning.calendar');
+        Route::post('reservations/{id}/checkin', [PlanningController::class, 'checkin'])->name('reservations.checkin');
+        Route::post('reservations/{id}/checkout', [PlanningController::class, 'checkout'])->name('reservations.checkout');
 
    // CRUD Types d’équipements
         Route::post('equipements/type', [EquipementController::class, 'storeType'])->name('typesequipements.store');
         Route::put('equipements/type/{id}', [EquipementController::class, 'updateType'])->name('typesequipements.update');
         Route::delete('equipements/type/{id}', [EquipementController::class, 'destroyType'])->name('typesequipements.destroy');
+    
+        Route::get('/etat-analytique', [EtatAnalytiqueController::class, 'index'])->name('etat_analytique');
     });
    
-    Route::post('/admin/reservations/{id}/checkin', [PlanningController::class, 'checkin'])
-    ->name('admin.reservations.checkin');
-
-Route::post('/admin/reservations/{id}/checkout', [PlanningController::class, 'checkout'])
-    ->name('admin.reservations.checkout');
-
    
 
+
+   
 
     

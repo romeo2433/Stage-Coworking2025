@@ -24,6 +24,7 @@ class Reservation extends Model
         'Id_Option',
         'Id_Type',
         'Id_Espace',
+        'quantite_reservation',
         'Id_Utilisateur'
     ];
 

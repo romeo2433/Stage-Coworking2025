@@ -14,7 +14,7 @@ class Espace extends Model
     protected $table = 'espaces';
     protected $primaryKey = 'Id_Espace';
     protected $fillable = [
-        'Nom', 'Statut', 'capacite', 'tarif_horaire', 
+        'Nom', 'Statut', 'capacite', 'quantite', 'tarif_horaire', 
         'tarif_journalier', 'tarif_mensuel', 'Id_Type'
     ];
     protected $dates = ['deleted_at'];

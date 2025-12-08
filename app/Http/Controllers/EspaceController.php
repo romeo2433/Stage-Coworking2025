@@ -77,44 +77,46 @@ class EspaceController extends Controller
             return view('admin.espaces.edit', compact('espace', 'types', 'equipements'));
         }
 
-    public function update(Request $request, $id)
+        public function update(Request $request, $id)
         {
             $utilisateur = session('utilisateur');
             if (!$utilisateur || $utilisateur->Id_Profil != 1) {
                 abort(403, 'Accès refusé');
             }
-
+        
             $request->validate([
                 'Nom' => 'required|string|max:255',
                 'Statut' => 'required|string',
                 'capacite' => 'required|integer|min:1',
+                'quantite' => 'required|integer|min:1',
                 'tarif_horaire' => 'required|numeric|min:0',
                 'tarif_journalier' => 'required|numeric|min:0',
                 'tarif_mensuel' => 'required|numeric|min:0',
                 'Id_Type' => 'required|exists:type_espaces,Id_Type',
                 'equipements' => 'array|nullable'
             ]);
-
+        
             $espace = Espace::findOrFail($id);
-
+        
             $espace->update([
                 'Nom' => $request->Nom,
                 'Statut' => $request->Statut,
                 'capacite' => $request->capacite,
+                'quantite' => $request->quantite,
                 'tarif_horaire' => $request->tarif_horaire,
                 'tarif_journalier' => $request->tarif_journalier,
                 'tarif_mensuel' => $request->tarif_mensuel,
                 'Id_Type' => $request->Id_Type,
             ]);
-
-            // Synchroniser les équipements si relation many-to-many
+        
             if ($request->has('equipements')) {
                 $espace->equipements()->sync($request->equipements);
             }
-
+        
             return redirect()->route('admin.espaces.photos', $espace->Id_Espace)
                 ->with('success', 'Espace modifié avec succès.');
         }
+        
 
     public function create()
         {
@@ -134,6 +136,7 @@ class EspaceController extends Controller
                 'Nom' => 'required|string|max:255',
                 'Statut' => 'required|string',
                 'capacite' => 'required|integer|min:1',
+                'quantite' => 'required|integer|min:1',
                 'tarif_horaire' => 'required|numeric|min:0',
                 'tarif_journalier' => 'required|numeric|min:0',
                 'tarif_mensuel' => 'required|numeric|min:0',
@@ -144,7 +147,7 @@ class EspaceController extends Controller
 
             // Enregistrement du nouvel espace
             $espace = new Espace($request->only([
-                'Nom', 'Statut', 'capacite', 
+                'Nom', 'Statut', 'capacite','quantite', 
                 'tarif_horaire', 'tarif_journalier', 
                 'tarif_mensuel', 'Id_Type'
             ]));

@@ -82,6 +82,12 @@
                                        class="form-control form-control-sm"
                                        value="{{ old('capacite', $espace->capacite) }}" required>
                             </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold small">Quantité</label>
+                                <input type="number" name="quantite" value="{{ $espace->quantite }}" 
+                                       class="form-control form-control-sm" min="1" required>
+                            </div>
+                            
 
                             <div class="col-md-4">
                                 <label class="form-label small fw-semibold">Horaire (Ar)</label>

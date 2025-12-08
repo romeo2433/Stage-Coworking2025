@@ -44,12 +44,7 @@
                     </li>
             
                     <!-- Création client -->
-                    <li class="nav-item mb-2">
-                        <a href="{{ route('admin.utilisateurs.create') }}" 
-                           class="nav-link {{ request()->routeIs('admin.utilisateurs.create') ? 'active' : '' }}">
-                            <i class="fas fa-user-plus me-2"></i> Créer un client
-                        </a>
-                    </li>
+                   
             
                     <!-- Nouvelle réservation -->
                     <li class="nav-item mb-2">
@@ -63,7 +58,7 @@
                     <li class="nav-item mx-2">
                         <a class="nav-link {{ request()->routeIs('admin.reservations.index') ? 'active' : '' }}" 
                            href="{{ route('admin.reservations.index') }}">
-                            <i class="far fa-user me-1"></i> Réservations en attente
+                            <i class="far fa-user me-1"></i> Réservations 
                         </a>
                     </li>
             
@@ -125,7 +120,7 @@
             &copy; 2025 Chambre de Commerce et d’Industrie d’Antananarivo.<br>
             Tous droits réservés. |
             <a href="https://www.cci.mg" target="_blank">cci.mg</a>
-            Plus de collaboration contactez Developper <a href="https://www.facebook.com/romeo.irivelo.7/" target="_blank">Dev E-Toerana</a> 
+            Plus de collaboration contactez Developper <a href="https://www.linkedin.com/in/mahefa-rom%C3%A9o-irivelo-3b4663362/" target="_blank">Dev E-Toerana</a> 
         </div>
     </footer>
    

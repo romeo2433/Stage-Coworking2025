@@ -146,7 +146,6 @@ body {
 }
 
 .navbar-brand h1::before {
-  content: '⚡';
   font-size: 1.1em;
 }
 
@@ -572,3 +571,9 @@ main {
 .compact-admin .list-group-item {
     padding: 6px 10px !important;
 }
+
+
+*:hover {
+  transform: none !important;
+}
+

@@ -4,6 +4,7 @@
     &copy; 2025 Chambre de Commerce et d’Industrie d’Antananarivo.<br>
     Tous droits réservés. |
     <a href="https://www.cci.mg" target="_blank">cci.mg</a>
+    Plus de collaboration contactez Developper <a href="https://www.facebook.com/romeo.irivelo.7/" target="_blank">Dev E-Toerana</a> 
   </div>
 </footer>
 

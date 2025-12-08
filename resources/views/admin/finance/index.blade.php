@@ -8,11 +8,17 @@
     <!-- PREMIÈRE PARTIE - RÉSERVATIONS -->
     <div class="col-12">
         <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body">
+                <a href="{{ route('admin.etat_analytique') }}" class="text-decoration-none fw-bold">
+                    Voir l’état analytique →
+                </a>
+            </div> 
             <div class="card-header bg-gradient-primary text-white py-2">
                 <h5 class="mb-0 fw-bold">
-                    <i class="bi bi-calendar-check me-1"></i>Gestion des Réservations
+                    <i class="bi bi-calendar-check me-1"></i>Gestion des Paiements
                 </h5>
             </div>
+                      
             <div class="card-body p-3">
                 {{-- FORMULAIRE DE RECHERCHE --}}
                 <div class="search-section bg-light rounded p-3 mb-3">
@@ -47,7 +53,7 @@
                                     <input type="checkbox" id="selectAll" class="form-check-input">
                                 </th>
                                 <th>Client</th>
-                                <th>Dates</th>
+                                <th>Date début et fin</th>
                                 <th>Référence</th>
                                 <th>Espace</th>
                                 <th>Statut</th>
@@ -62,7 +68,6 @@
                                     $paiement = $res->paiement ?? ($res->paiements->first() ?? null);
                                     $montant = $res->total - ($res->paiements->sum('montant_payer') ?? 0);
                                 @endphp
-
                                 <form action="{{ route('admin.reservations.payer', $res->Id_Reservation) }}" method="POST">
                                     @csrf
                                     <tr>
@@ -94,30 +99,38 @@
                                         <td>
                                             <small class="fw-bold text-success">{{ number_format($montant, 0, ',', ' ') }} Ar</small>
                                         </td>
+                            
+                                        <!-- Champs Paiement séparés en colonnes -->
                                         <td>
-                                            <div class="d-flex flex-column gap-1">
-                                                <input type="text" name="Reference" class="form-control form-control-xs" placeholder="Réf. paiement" value="{{ $paiement->Reference ?? '' }}">
-                                                <input type="datetime-local" name="date_paiement" class="form-control form-control-xs" 
-                                                    value="{{ $paiement && $paiement->date_paiement ? date('Y-m-d', strtotime($paiement->date_paiement)) : '' }}">
-                                                <select name="Id_Mode" class="form-select form-select-xs">
-                                                    @foreach($modes as $mode)
-                                                        <option value="{{ $mode->Id_Mode }}" {{ ($paiement->Id_Mode ?? '') == $mode->Id_Mode ? 'selected' : '' }}>
-                                                            {{ $mode->Type_Mode }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                            <input type="text" name="Reference" class="form-control form-control-sm" placeholder="Réf. paiement" value="{{ $paiement->Reference ?? '' }}">
+                                        </td>
+                                        <td>
+                                            <input type="date" 
+                                                   name="date_paiement" 
+                                                   class="form-control form-control-sm"
+                                                   value="{{ $paiement && $paiement->date_paiement 
+                                                                ? date('Y-m-d', strtotime($paiement->date_paiement)) 
+                                                                : date('Y-m-d') }}">
+                                        </td>                                                                            
+                                        <td>
+                                            <select name="Id_Mode" class="form-select form-select-sm">
+                                                @foreach($modes as $mode)
+                                                    <option value="{{ $mode->Id_Mode }}" {{ ($paiement->Id_Mode ?? '') == $mode->Id_Mode ? 'selected' : '' }}>
+                                                        {{ $mode->Type_Mode }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </td>
                                         <td>
                                             <button type="submit" class="btn btn-primary btn-sm w-100 py-1">
-                                                <i class="bi bi-currency-dollar me-1"></i>
-                                                {{ $paiement ? 'Sauvegarder' : 'Payer' }}
+                                                <i class="bi bi-currency-dollar me-1"></i> {{ $paiement ? 'Sauvegarder' : 'Payer' }}
                                             </button>
                                         </td>
                                     </tr>
                                 </form>        
                             @endforeach
                         </tbody>
+                                                   
                     </table>
                 </div>
                 <div class="total-section bg-light rounded p-2 mt-2">
@@ -316,13 +329,16 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <small>{{ $paiement->date_paiement ? \Carbon\Carbon::parse($paiement->date_paiement)->format('d/m/Y H:i') : '—' }}</small>
+                                        <small>{{ $paiement->date_paiement ? \Carbon\Carbon::parse($paiement->date_paiement)->format('d/m/Y') : '—' }}</small>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
+                <div class="mt-3">
+                    {{ $paiements->links('pagination::bootstrap-5') }}
+                </div>                
                 @endif
             </div>
         </div>

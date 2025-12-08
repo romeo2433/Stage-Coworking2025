@@ -39,6 +39,11 @@
             </div>
 
             <div class="col-md-6">
+                <label class="form-label fw-semibold small">Quantité du salle</label>
+                <input type="number" name="quantite" class="form-control form-control-sm" min="1" required>
+            </div>            
+
+            <div class="col-md-6">
                 <label class="form-label fw-semibold small">Type d’espace</label>
                 <select name="Id_Type" class="form-select form-select-sm" required>
                     <option value="">-- Choisir --</option>
@@ -88,4 +93,5 @@
         </div>
     </form>
 </div>
+
 @endsection

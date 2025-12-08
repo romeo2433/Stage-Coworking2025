@@ -56,15 +56,31 @@
                     <label class="form-label">Entreprise (optionnel)</label>
                     <input type="text" name="Entreprise" class="form-control">
                 </div>
+                <div class="col-12 text-center my-2">
+                    <div class="p-2 bg-dark text-white rounded" style="font-size: 22px; letter-spacing: 4px;">
+                        {{ $code }}
+                    </div>
+                    <small>Veuillez saisir ce code ci-dessous</small>
+                </div>
+                
+                <div class="col-12">
+                    <label class="form-label">Vérification anti-robot</label>
+                    <input type="text" name="captcha" class="form-control" required>
+                
+                    @error('captcha')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+                
             
-                <!-- ✅ reCAPTCHA Google -->
+                <!-- ✅ reCAPTCHA Google 
                 <div class="col-12 my-3">
                     {!! NoCaptcha::display() !!}
                     @error('g-recaptcha-response')
                         <span class="text-danger small">{{ $message }}</span>
                     @enderror
                 </div>
-                {!! NoCaptcha::renderJs() !!}
+                {!! NoCaptcha::renderJs() !!}-->
             
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary w-100">S'inscrire</button>

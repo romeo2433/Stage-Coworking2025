@@ -76,22 +76,24 @@ class AdminPaiementController extends Controller
         }
 
 
-        $paiements = $query->orderBy('created_at', 'desc')->get();
+        $paiements = $query->orderBy('created_at', 'desc')
+        ->paginate(10)
+        ->withQueryString();
         $totalPaid = $paiements->sum('montant_payer');
           // Partie Réservations
-    // -------------------------
+    
     $queryRes = Reservation::with('utilisateur', 'espace')
     ->where('Statut_Reservation', 'confirmee');
 
-if ($request->filled('reference')) {
-    $queryRes->where('Reference', 'like', '%' . $request->reference . '%');
-}
+        if ($request->filled('reference')) {
+            $queryRes->where('Reference', 'like', '%' . $request->reference . '%');
+        }
 
-if ($request->filled('nom_utilisateur')) {
-    $queryRes->whereHas('utilisateur', function ($q) use ($request) {
-        $q->where('Nom', 'like', '%'.$request->nom_utilisateur.'%')
-          ->orWhere('Prenom', 'like', '%'.$request->nom_utilisateur.'%');
-    });
+        if ($request->filled('nom_utilisateur')) {
+            $queryRes->whereHas('utilisateur', function ($q) use ($request) {
+                $q->where('Nom', 'like', '%'.$request->nom_utilisateur.'%')
+                ->orWhere('Prenom', 'like', '%'.$request->nom_utilisateur.'%');
+            });
         }
 
         $reservations = $queryRes->orderBy('created_at', 'desc')->get();
@@ -155,8 +157,6 @@ if ($request->filled('nom_utilisateur')) {
             ->route('admin.reservations.index')
             ->with('success', 'Paiement traité ! La facture est disponible.');
     }
-    
-
     /*public function update(Request $request, $id)
         {
             $paiement = Paiement::findOrFail($id);
