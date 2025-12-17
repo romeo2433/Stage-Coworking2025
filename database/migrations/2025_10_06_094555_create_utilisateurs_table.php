@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('date_inscription');
             $table->unsignedBigInteger('Id_Profil');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('Id_Profil')
                   ->references('Id_Profil')

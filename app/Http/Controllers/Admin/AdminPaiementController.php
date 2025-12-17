@@ -75,11 +75,11 @@ class AdminPaiementController extends Controller
             $query->whereYear('date_paiement', $request->annee);
         }
 
-
+        $totalPaid = $query->sum('montant_payer');
         $paiements = $query->orderBy('created_at', 'desc')
         ->paginate(10)
         ->withQueryString();
-        $totalPaid = $paiements->sum('montant_payer');
+       
           // Partie Réservations
     
     $queryRes = Reservation::with('utilisateur', 'espace')
@@ -108,55 +108,77 @@ class AdminPaiementController extends Controller
         }
     
 
-    public function payer(Request $request, $reservation_id)
-    {
-        $reservation = Reservation::findOrFail($reservation_id);
-    
-        // Paiement existant ou création
-        $paiement = $reservation->paiement ?? Paiement::create([
-            'Id_Reservation'  => $reservation->Id_Reservation,
-            'Reference'       => $request->Reference ?? 'PAY-' . strtoupper(uniqid()),
-            'Id_Mode'         => $request->Id_Mode ?? 1,
-            'montant_payer'   => 0,
-            'montant_Impayer' => $reservation->total,
-            'statut_paiement' => 'en_attente',
-            'date_paiement'   => $request->date_paiement ?? null,
-        ]);
-    
-        // Mise à jour si formulaire soumis
-        if ($request->filled('Reference') || $request->filled('date_paiement') || $request->filled('Id_Mode')) {
-            $paiement->update([
-                'Reference'     => $request->Reference ?? $paiement->Reference,
-                'date_paiement' => $request->date_paiement ?? $paiement->date_paiement,
-                'Id_Mode'       => $request->Id_Mode ?? $paiement->Id_Mode,
+        public function payer(Request $request, $reservation_id)
+        {
+            $reservation = Reservation::findOrFail($reservation_id);
+        
+            $paiement = $reservation->paiement ?? Paiement::create([
+                'Id_Reservation'  => $reservation->Id_Reservation,
+                'Reference'       => $request->Reference ?? 'PAY-' . strtoupper(uniqid()),
+                'Id_Mode'         => $request->Id_Mode ?? 1,
+                'montant_payer'   => 0,
+                'montant_Impayer' => $reservation->total,
+                'statut_paiement' => 'en_attente',
+                'date_paiement'   => $request->date_paiement ?? null,
             ]);
+        
+            if ($request->filled('Reference') || $request->filled('date_paiement') || $request->filled('Id_Mode')) {
+                $paiement->update([
+                    'Reference'     => $request->Reference ?? $paiement->Reference,
+                    'date_paiement' => $request->date_paiement ?? $paiement->date_paiement,
+                    'Id_Mode'       => $request->Id_Mode ?? $paiement->Id_Mode,
+                ]);
+            }
+        
+            if ($paiement->statut_paiement === 'en_attente') {
+                $paiement->update([
+                    'montant_payer'   => $reservation->total,
+                    'montant_Impayer' => 0,
+                    'statut_paiement' => 'paye',
+                    'date_paiement'   => $paiement->date_paiement ?? now(),
+                ]);
+        
+                $reservation->update(['Statut_Reservation' => 'payee']);
+        
+                // Optionnel : générer la facture en arrière-plan
+                // (tu peux la générer plus tard ou via un job)
+            }
+        
+            // RETOUR JSON AU LIEU DE REDIRECT
+            if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Paiement enregistré avec succès !'
+                ]);
+            }
+        
+            // Ancien comportement (si appel direct)
+            return redirect()->back()->with('success', 'Paiement enregistré avec succès !');
         }
-    
-        // Si paiement en attente → on règle immédiatement
-        if ($paiement->statut_paiement === 'en_attente') {
-            $paiement->update([
-                'montant_payer'   => $reservation->total,
-                'montant_Impayer' => 0,
-                'statut_paiement' => 'paye',
-                'date_paiement'   => $paiement->date_paiement ?? now(),
-            ]);
-    
-            $reservation->update(['Statut_Reservation' => 'payee']);
-    
-            // Génération PDF
-            $pdf = Pdf::loadView('admin.paiements.facture', [
-                'reservation' => $reservation,
-                'paiement'    => $paiement,
-            ]);
-    
-            $fileName = 'Facture_'.$paiement->Reference.'.pdf';
-            $pdf->save(storage_path('app/public/factures/' . $fileName));
+        public function exportOnePdf($id)
+        {
+            try {
+                // Récupérer le paiement avec ses relations
+                $paiement = Paiement::with(['reservation.utilisateur', 'reservation.espace', 'mode'])
+                            ->findOrFail($id);
+        
+                // Charger la vue Blade pour le PDF
+                // Crée une vue "resources/views/admin/finance/one_pdf.blade.php"
+                $pdf = Pdf::loadView('admin.finance.one_pdf', compact('paiement'))
+                          ->setPaper('A4', 'portrait');
+        
+                // Afficher directement dans le navigateur
+                return $pdf->stream("paiement_{$paiement->Id_Paiement}.pdf");
+        
+            } catch (\Exception $e) {
+                // Afficher l’erreur pour debug
+                dd("Erreur PDF :", $e->getMessage());
+            }
         }
-    
-        return redirect()
-            ->route('admin.reservations.index')
-            ->with('success', 'Paiement traité ! La facture est disponible.');
-    }
+        
+        
+        
+        
     /*public function update(Request $request, $id)
         {
             $paiement = Paiement::findOrFail($id);

@@ -57,12 +57,12 @@ document.addEventListener('DOMContentLoaded', function () {
     function calculerTotal() {
         let total = 0;
     
-        // 1️⃣ Équipements
+        // 1️ Équipements
         equipements.forEach(e => {
             if (e.checkbox?.checked) total += parseFloat(e.prix || 0);
         });
     
-        // 2️⃣ Abonnement ou tarif horaire
+        // 2️ Abonnement ou tarif horaire
         const selectedOption = abonnementSelect.options[abonnementSelect.selectedIndex];
         const quantite = parseInt(document.getElementById('quantite_reservation')?.value) || 1;
     
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
             total += tarifHoraire * heures;
         }
     
-        // 3️⃣ Multiplier par la quantité
+        // 3 Multiplier par la quantité
         total *= quantite;
     
         totalInput.value = total.toLocaleString('fr-FR') + ' Ar';
@@ -159,18 +159,62 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
     }
+    const quantiteInput = document.getElementById('quantite_reservation');
+
+    function mettreAJourQuantiteMax() {
+        const espaceId = espaceSelect.value;
+        const date = dateInput.value;
+        const heure = heureSelect.value;
+        const duree = parseInt(dureeInput.value) || 1;
+    
+        if (!espaceId || !date || !heure) {
+            quantiteInput.max = quantiteMaxEspace;
+            return;
+        }
+    
+        fetch(`/admin/espaces/${espaceId}/places-restantes?date=${date}&heure=${heure}&duree=${duree}`)
+        .then(r => {
+            if (!r.ok) throw new Error('Erreur serveur');
+            return r.json();
+        })
+        .then(data => {
+            const max = Math.max(parseInt(data.restante || 0), 0);
+            quantiteInput.max = max;
+            if (parseInt(quantiteInput.value) > max) quantiteInput.value = max;
+            quantiteInput.disabled = (max === 0);0
+    })
+    .catch(err => {
+        console.error('Erreur fetch places-restantes:', err);
+        // éventuellement revenir au max de l'espace
+        quantiteInput.max = quantiteMaxEspace;
+    });
+
+        }
+        
+        // Forcer le blocage à la saisie
+        quantiteInput.addEventListener('input', () => {
+            const max = parseInt(quantiteInput.max) || 1;
+            if (parseInt(quantiteInput.value) > max) {
+                quantiteInput.value = max;
+            }
+        });
+        
+    
 
     // ÉVÉNEMENTS
     abonnementSelect.addEventListener('change', gererChampsAbonnement);
-    espaceSelect.addEventListener('change', () => { chargerEquipements(); chargerHeuresDisponibles(); });
-    dateInput.addEventListener('change', chargerHeuresDisponibles);
+    espaceSelect.addEventListener('change', () => { chargerEquipements(); chargerHeuresDisponibles();  mettreAJourQuantiteMax(); });
+    dateInput.addEventListener('change', () => { chargerHeuresDisponibles();  mettreAJourQuantiteMax(); });
     dureeInput.addEventListener('input', calculerTotal);
     document.getElementById('duree_jour')?.addEventListener('input', calculerTotal);
     document.getElementById('duree_mois')?.addEventListener('input', calculerTotal);
     document.getElementById('quantite_reservation').addEventListener('input', calculerTotal);
-
+    
+    heureSelect.addEventListener('change', mettreAJourQuantiteMax);
+    dureeInput.addEventListener('input', mettreAJourQuantiteMax);
 
     // INIT
     chargerEquipements();
     gererChampsAbonnement();
+    mettreAJourQuantiteMax();
 });

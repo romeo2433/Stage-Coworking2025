@@ -257,8 +257,8 @@ main {
 /* ===== FORMULAIRES COMPACTS ===== */
 .reservation-wrapper {
   display: flex;
-  justify-content: center;
-  padding: 1rem;
+  text-align: center;
+
 }
 
 .reservation-form.small {
@@ -266,7 +266,7 @@ main {
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
   width: 100%;
-  max-width: 450px;
+  max-width: 400px;
   padding: 1.2rem;
   border: 1px solid #e2e8f0;
   transition: var(--transition);

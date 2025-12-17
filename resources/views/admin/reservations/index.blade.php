@@ -65,8 +65,6 @@
         </div>
     </div>
 @endif
-
-
     <!--  HISTORIQUE DES RÉSERVATIONS -->
     <div class="col-12">
         <div class="card shadow-sm border-0">
@@ -118,6 +116,7 @@
                                 <th>Date début</th>
                                 <th>Date fin</th>
                                 <th>Durée</th>
+                                <th>Prix</th>
                                 <th>Statut</th>
                                 <th>Check-in / Check-out</th>
                             </tr>
@@ -140,6 +139,7 @@
                                             @else h @endif
                                         @else h @endif
                                     </td>
+                                    <td>{{ number_format($h->total, 0, ',', ' ') }} Ar</td>
                                     <td>
                                         @switch($h->Statut_Reservation)
                                             @case('confirmee') <span class="badge bg-success">Confirmée</span> @break
@@ -191,7 +191,16 @@
                                             </div>
                                     
                                         @endif
+                                    </td>    
+                                    <td>
+                                        @if($h->Statut_Reservation !== 'terminee' && $h->Statut_Reservation !== 'annulee')
+                                            <button type="button" class="btn btn-warning btn-sm" 
+                                                    onclick="openEditModal({{ $h->Id_Reservation }}, '{{ $h->Id_Abonnement }}', {{ $h->duree_heures }})">
+                                                Modifier
+                                            </button>
+                                        @endif
                                     </td>                                    
+                                                                    
                                 </tr>
                             @empty
                                 <tr>
@@ -202,12 +211,58 @@
                     </table>
                     <div class="mt-3">
                         {{ $historique->links('pagination::bootstrap-5') }}
-                    </div>                    
+                    </div>  
+                   
+                    <!-- MODAL MODIFIER DURÉE -->
+                    <div class="modal fade" id="editDureeModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <form id="editDureeForm" method="POST"> {{-- ATTENTION : bien POST en majuscules --}}
+                                @csrf
+                                @method('PUT') {{-- Laravel va transformer ça en PUT grâce au POST --}}
+
+                                <div class="modal-content">
+                                    <div class="modal-header bg-warning">
+                                        <h5 class="modal-title">Modifier la durée</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <label for="duree" class="form-label">Nouvelle durée</label>
+                                        <input type="number" min="1" class="form-control" name="duree" id="modalDuree" required>
+
+                                        <input type="hidden" name="Id_Abonnement" id="modalAbonnement">
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                        <button type="submit" class="btn btn-warning">Mettre à jour</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>     
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function openEditModal(idReservation, idAbonnement, duree) {
+        // Remplir les champs
+        document.getElementById('modalDuree').value = duree;
+        document.getElementById('modalAbonnement').value = idAbonnement || '';
 
+        // Générer l'URL correcte avec l'ID de la réservation
+        let url = "{{ route('admin.reservations.update_duree', ':id') }}";
+        url = url.replace(':id', idReservation);
+
+        // Mettre à jour l'action du formulaire
+        document.getElementById('editDureeForm').action = url;
+
+        // Ouvrir le modal Bootstrap 5
+        const modal = new bootstrap.Modal(document.getElementById('editDureeModal'));
+        modal.show();
+    }
+</script>
 @endsection
 <!--Hatreto mody mandroso miandry vokam-pikirizana --}}

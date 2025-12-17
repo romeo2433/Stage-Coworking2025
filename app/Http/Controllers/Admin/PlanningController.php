@@ -17,12 +17,10 @@ class PlanningController extends Controller
     public function index()
         {
             $today = Carbon::today()->toDateString();
-        
             //  Récupère toutes les réservations (pas que celles du jour)
             $reservations = Reservation::with(['espace', 'utilisateur'])
                 ->orderBy('date_debut', 'desc')
-                ->get();
-             
+                ->get();         
             //  Réservations du jour (pour le tableau)
             $todayCarbon = Carbon::today();
             $reservationsDuJour = $reservations->filter(function ($r) use ($todayCarbon) {
@@ -34,8 +32,6 @@ class PlanningController extends Controller
                 'today' => $today
             ]);
         }
-        
-
     public function checkin($reservationId)
         {
             $reservation = Reservation::findOrFail($reservationId);
@@ -98,69 +94,55 @@ class PlanningController extends Controller
                 return response()->json(['error' => 'Date manquante'], 400);
             }
         
-            // Heures possibles : 9h à 17h
+            $espace = Espace::findOrFail($id);
+            $quantiteTotale = $espace->quantite ?? 1;
+        
             $heuresPossibles = [];
             for ($h = 9; $h < 17; $h++) {
                 $heuresPossibles[] = sprintf('%02d:00', $h);
             }
         
-            // Récupérer toutes les réservations pour cette date et cet espace
+            $startOfDay = Carbon::parse("$date 00:00:00");
+            $endOfDay   = Carbon::parse("$date 23:59:59");
+        
             $reservations = Reservation::where('Id_Espace', $id)
-                ->where(function($query) use ($date) {
-
-                    $startOfDay = $date . ' 00:00:00';
-                    $endOfDay   = $date . ' 23:59:59';
-
-                    // toute réservation qui chevauche la journée
-                    $query->where('date_debut', '<', $endOfDay)
-                        ->where('date_fin', '>', $startOfDay);
-                })
-                ->whereIn('Statut_Reservation', ['en_attente', 'confirmee', 'terminee','payee'])
-                ->get(['date_debut', 'date_fin']);
-
-        
-            // DEBUG: Vérifiez ce qui est récupéré
-            Log::info('Réservations trouvées pour espace ' . $id . ' à la date ' . $date . ':', $reservations->toArray());
-        
-            // Tableau [heure => statut]
-            $heuresStatut = [];
-            foreach ($heuresPossibles as $h) {
-                $heuresStatut[$h] = 'Disponible';
-            }
-        
-            foreach ($reservations as $reservation) {
-                // Convertir en objets DateTime pour mieux gérer
-                $debut = Carbon::parse($reservation->date_debut);
-                $fin = Carbon::parse($reservation->date_fin);
-                
-                // Vérifier chaque heure possible
-                foreach ($heuresPossibles as $heureStr) {
-                    $heureDebut = Carbon::parse($date . ' ' . $heureStr);
-                    $heureFin = Carbon::parse($date . ' ' . $heureStr)->addHour();
-                    
-                    // Vérifier si la réservation chevauche cette heure
+                ->where('date_debut', '<', $endOfDay)
+                ->where('date_fin', '>', $startOfDay)
+                ->whereIn('Statut_Reservation', ['en_attente','confirmee','payee'])
+                ->get();
+            $result = [];        
+            foreach ($heuresPossibles as $heureStr) {
+                $heureDebut = Carbon::parse("$date $heureStr");
+                $heureFin = $heureDebut->copy()->addHour();
+            
+                $placesOccupees = 0;
+            
+                foreach ($reservations as $r) {
+                    $debut = Carbon::parse($r->date_debut);
+                    $fin = Carbon::parse($r->date_fin);
+            
+                    // Chevauchement : une réservation occupe l'heure si elle commence avant la fin de l'heure
+                    // ET finit après le début de l'heure
                     if ($debut < $heureFin && $fin > $heureDebut) {
-                        $heuresStatut[$heureStr] = 'Réservée';
-                        Log::info('Heure ' . $heureStr . ' marquée comme réservée par réservation: ' . $debut . ' - ' . $fin);
+                        $placesOccupees += $r->quantite_reservation;
                     }
                 }
-            }
-        
-            // DEBUG: Vérifiez le résultat final
-            Log::info('Statut final des heures:', $heuresStatut);
-        
-            // Conversion en liste d'objets pour le frontend
-            $result = [];
-            foreach ($heuresStatut as $heure => $statut) {
+            
+                $placesRestantes = max(0, $quantiteTotale - $placesOccupees);
+                $complet = $placesOccupees >= $quantiteTotale;
+            
                 $result[] = [
-                    'heure' => $heure,
-                    'statut' => $statut,
+                    'heure'            => $heureStr,
+                    'statut'           => $complet ? 'Réservée' : 'Disponible',
+                    'label'            => $complet 
+                        ? 'Réservée (complet)' 
+                        : "Disponible ($placesRestantes place(s) restante(s))",
+                    'places_restantes' => $placesRestantes
                 ];
             }
         
             return response()->json($result);
         }
-        
         public function calendar(Request $request)
         {
             $espaces = Espace::orderBy('Nom')->get();

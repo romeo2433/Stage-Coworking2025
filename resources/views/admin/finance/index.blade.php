@@ -58,8 +58,9 @@
                                 <th>Espace</th>
                                 <th>Statut</th>
                                 <th>Montant</th>
-                                <th>Paiement</th>
-                                <th width="100">Action</th>
+                                <th> Reference Paiement</th>
+                                <th>Date de Paiements</th>
+                                <th>Mode de paiements</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -287,6 +288,7 @@
                                 <th>Montant</th>
                                 <th>Statut</th>
                                 <th>Date</th>
+                                <th class="text-center">PDF</th> 
                             </tr>
                         </thead>
                         <tbody>
@@ -331,6 +333,14 @@
                                     <td>
                                         <small>{{ $paiement->date_paiement ? \Carbon\Carbon::parse($paiement->date_paiement)->format('d/m/Y') : '—' }}</small>
                                     </td>
+                                    <td class="text-center">
+                                        <a href="{{ route('admin.paiements.pdf.one', ['id' => $paiement->Id_Paiement]) }}"
+                                           target="_blank"
+                                           class="btn btn-sm btn-outline-danger"
+                                           title="Voir le reçu PDF">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                    </td>                                    
                                 </tr>
                             @endforeach
                         </tbody>

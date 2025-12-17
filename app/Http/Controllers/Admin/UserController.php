@@ -9,6 +9,7 @@ use App\Models\Utilisateur;
 use App\Models\Espace;
 use App\Models\Reservation;
 use App\Models\Equipement;
+use App\Models\TypeClient;
 use Carbon\Carbon;
 
 
@@ -16,9 +17,18 @@ class UserController extends Controller
 {
     // Formulaire de création
     public function create()
-    {
-        return view('admin.utilisateurs.create');
-    }
+        {
+            return view('admin.utilisateurs.create');
+        }
+    public function index()
+        {
+            $typeClients = TypeClient::all();
+            $utilisateurs = Utilisateur::with('typeClient')->get();
+            
+            return view('admin.utilisateurs.show', compact('utilisateurs', 'typeClients'));
+        }
+        
+        
 
     // Stocker le nouvel utilisateur
     public function store(Request $request)
@@ -86,7 +96,7 @@ class UserController extends Controller
             return redirect()->route('admin.dashboard')->with('success', 'Réservation créée avec succès.');
         }
 
-        public function NouveauUtilisateur(Request $request)
+    public function NouveauUtilisateur(Request $request)
         {
             $request->validate([
                 'Prenom' => 'required|string|max:255',
@@ -95,6 +105,7 @@ class UserController extends Controller
                 'numero' => 'required|string|max:20|unique:utilisateurs,numero',
                 'Entreprise' => 'nullable|string|max:255',
                 'password' => 'required|string|min:6|confirmed',
+                'Id_Type_Client' => 'nullable|exists:type_clients,Id_Type_Client',
             ]);            
     
             $user = new Utilisateur();
@@ -106,9 +117,45 @@ class UserController extends Controller
             $user->password =$request->password;
             $user->date_inscription = Carbon::now()->toDateString();
             $user->Id_Profil = 4;
+            $user->Id_Type_Client = $request->Id_Type_Client;
+
             $user->save();
     
             return redirect('admin/reservations/create')
             ->with('success', 'Utilisateur créé avec succès !');
         }
+    public function update(Request $request, $id)
+        {
+            $utilisateur = Utilisateur::findOrFail($id);
+
+            $request->validate([
+                'Prenom' => 'required|string|max:255',
+                'Nom' => 'required|string|max:255',
+                'email' => 'required|email|unique:utilisateurs,email,' . $id . ',Id_Utilisateur',
+                'numero' => 'required|string|max:20|unique:utilisateurs,numero,' . $id . ',Id_Utilisateur',
+                'Entreprise' => 'nullable|string|max:255',
+                'Id_Type_Client' => 'required|exists:type_clients,Id_Type_Client',
+            ]);
+
+            $utilisateur->Prenom = $request->Prenom;
+            $utilisateur->Nom = $request->Nom;
+            $utilisateur->email = $request->email;
+            $utilisateur->numero = $request->numero;
+            $utilisateur->Entreprise = $request->Entreprise;
+            $utilisateur->Id_Type_Client = $request->Id_Type_Client;
+            $utilisateur->save();
+
+            return redirect()->route('admin.utilisateurs.show')
+                ->with('success', 'Utilisateur mis à jour avec succès.');
+        }
+    public function destroy($id)
+        {
+            $utilisateur = Utilisateur::findOrFail($id);
+            $utilisateur->delete();
+        
+            return redirect()->route('admin.utilisateurs.show')
+                ->with('success', 'Utilisateur supprimé avec succès.');
+        }
+        
+
 }

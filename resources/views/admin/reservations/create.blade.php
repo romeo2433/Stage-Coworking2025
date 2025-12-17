@@ -17,6 +17,11 @@
         <a href="{{ route('admin.utilisateurs.create') }}" class="btn btn-primary">
             <i class="fas fa-user-plus"></i> Nouveau client
         </a>
+        <a href="{{ route('admin.utilisateurs.show') }}" class="btn btn-info">
+            <i class="fas fa-users"></i> Voir tous les utilisateurs
+        </a>
+        
+              
         <a href="{{ route('admin.reservations.create') }}" class="btn btn-secondary">Réinitialiser</a>
         <form method="GET" action="{{ route('admin.reservations.create') }}" class="mb-3">
             <label class="form-label fw-bold">Rechercher un client :</label>
@@ -25,14 +30,41 @@
             <button type="submit" class="btn btn-primary mt-2">Rechercher</button>
         </form>
 
-        <h4 class="fw-bold">Choisir un client :</h4>
+        <h4 class="fw-bold mb-3">Choisir un client :</h4>
+
         <ul class="list-group">
             @foreach($utilisateurs as $user)
-                <li class="list-group-item list-group-item-action user-item" data-email="{{ $user->email }}">
-                    {{ $user->Prenom }} {{ $user->Nom }}
+                <li class="list-group-item list-group-item-action user-item"
+                    data-email="{{ $user->email }}"
+                    data-telephone="{{ $user->telephone ?? '' }}">
+        
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-bold">
+                                {{ $user->Prenom }} {{ $user->Nom }}
+                            </div>
+        
+                            <div class="text-muted small">
+                                📧 {{ $user->email }}
+                            </div>
+        
+                            @if(!empty($user->numero))
+                                <div class="text-muted small">
+                                    📞 {{ $user->numero }}
+                                </div>
+                            @endif
+                            <div class="text-muted small">
+                                🏷️ {{ $user->typeClient->type ?? 'Non défini' }}
+                            </div>                            
+                        </div>
+        
+                        <span class="badge bg-primary">Client</span>
+                    </div>
+        
                 </li>
             @endforeach
         </ul>
+        
     </div>
 
     {{-- Formulaire de réservation --}}
@@ -91,17 +123,11 @@
                         <option value="">-- Choisir --</option>
                     </select>
                 </div>
-                <div>
-                    <label class="form-label fw-bold">Quantité</label>
-                    <input type="number" name="quantite_reservation" id="quantite_reservation" 
-                           class="form-control form-control-sm" min="1" value="1" required>
-                </div>
                 
-
                 <!-- === LES 3 CHAMPS DURÉE (exactement comme ça) === -->
                 <div id="champ-duree-heures" class="mb-3">
                     <label class="form-label fw-bold">Durée (heures)</label>
-                    <input type="number" name="duree" id="duree" min="1" max="8" value="1" class="form-control form-control-sm" required>
+                    <input type="number" name="duree" id="duree" min="1"  value="1" class="form-control form-control-sm" required>
                 </div>
 
                 <div id="champ-duree-jours" class="mb-3" style="display: none;">
@@ -112,6 +138,11 @@
                 <div id="champ-duree-mois" class="mb-3" style="display: none;">
                     <label class="form-label fw-bold">Durée (mois)</label>
                     <input type="number" name="duree_mois" id="duree_mois" min="1" value="1" class="form-control form-control-sm">
+                </div>
+                <div>
+                    <label class="form-label fw-bold">Quantité</label>
+                    <input type="number" name="quantite_reservation" id="quantite_reservation" 
+                           class="form-control form-control-sm" min="1" value="1" required>
                 </div>
                 
 
@@ -156,6 +187,5 @@
         });
     });
 </script>
-<script src="{{ asset('js/AdminReservation.js') }}?v={{ time() }}"></script>
 <script src="{{ asset('js/AdminReservation.js') }}"></script>
 @endsection

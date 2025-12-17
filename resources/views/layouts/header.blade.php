@@ -47,10 +47,10 @@
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div>
    
-    <!-- Mention Chambre de Commerce -->
+    <!-- Mention Chambre de Commerce
     <div class="ms-auto">
       <img src="/assets/img/ccia.png" alt="Logo" class="logo-img">
-    </div>
+    </div> -->
     <!-- Barre de recherche 
     <div class="search-bar me-3 d-none d-md-flex">
       

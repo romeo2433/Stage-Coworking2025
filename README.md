@@ -33,7 +33,12 @@ Installe le package Laravel pour reCAPTCHA pour connaissances robot :
 Installe le package Laravel pour faire une export pdf 
     composer require barryvdh/laravel-dompdf
 Installe le package Laravel pour faire une export excel
-    composer require maatwebsite/excel
+   composer require maatwebsite/excel:^3.1  # Pour l'Excel
+   php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider" --tag=config
+Installation pour faire une pagination 
+    composer require livewire/livewire
+
+
 
 
 php artisan migrate
@@ -132,10 +137,3 @@ a mettre dans
             php artisan serve 
         Demarrer le production cloudflared
             cloudflared tunnel --url http://127.0.0.1:8000
-
-
-
-
-
-
-

@@ -18,7 +18,7 @@ class ReservationAdminController extends Controller
             $query->where('Etat', 'OK');
         }])->where('Statut', 'disponible')->get();
     
-        $query = Utilisateur::query();
+        $query = Utilisateur::where('Id_Profil', 4);
     
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
@@ -29,7 +29,7 @@ class ReservationAdminController extends Controller
             });
         }
     
-        $utilisateurs = $query->get();
+        $utilisateurs = $query->limit(2)->get();
     
         $abonnements = Abonnement::where('Status_Abonnement', 'actif')->get();
     
@@ -134,7 +134,7 @@ class ReservationAdminController extends Controller
            $reservation->equipements()->sync($request->equipements);
        }
    
-       return redirect()->route('admin.finance.index')
+       return redirect()->route('admin.reservations.index')
            ->with('success', "Réservation créée avec succès ! Réf : {$reference}");
    }
    
@@ -171,7 +171,7 @@ class ReservationAdminController extends Controller
             // Récupérer toutes les réservations du jour
             $reservations = Reservation::where('Id_Espace', $id)
                 ->whereDate('date_debut', $date)
-                ->whereIn('Statut_Reservation', ['en_attente','confirmee','terminee'])
+                ->whereIn('Statut_Reservation', ['en_attente','confirmee','terminee','payee'])
                 ->get();
 
             $heuresBloquees = [];
@@ -181,8 +181,10 @@ class ReservationAdminController extends Controller
                 $finTest   = $debutTest->copy()->addHour();
 
                 $count = $reservations->filter(function ($r) use ($debutTest, $finTest) {
-                    return \Carbon\Carbon::parse($r->date_debut) < $finTest && \Carbon\Carbon::parse($r->date_fin) > $debutTest;
-                })->count();
+                    return \Carbon\Carbon::parse($r->date_debut) < $finTest &&
+                           \Carbon\Carbon::parse($r->date_fin) > $debutTest;
+                })->sum('quantite_reservation');  
+                
 
                 // Si le nombre de réservations chevauchantes >= quantité → heure bloquée
                 if ($count >= $espace->quantite) {
@@ -300,4 +302,57 @@ public function preview(Request $request)
                 'restantes' => $espace->quantite - $count
             ]);
         }
+
+        public function placesRestantes(Request $request, $id)
+{
+    $espace = Espace::findOrFail($id);
+
+    $date  = $request->query('date');            // ex: '2025-12-10'
+    $heure = $request->query('heure');           // ex: '09:00'
+    $duree = intval($request->query('duree', 1)); // par défaut 1 heure
+
+    // Si date ou heure manquent, renvoyer la capacité totale
+    if (!$date || !$heure) {
+        return response()->json([
+            'totale'    => (int) $espace->quantite,
+            'reservee'  => 0,
+            'restante'  => (int) $espace->quantite,
+        ]);
+    }
+
+    // Construire début/fin en Carbon (vérifier format)
+    try {
+        $debut = \Carbon\Carbon::createFromFormat('Y-m-d H:i', "$date $heure");
+    } catch (\Exception $e) {
+        // Si le format est incorrect, renvoyer la capacité totale (ou une erreur selon ton choix)
+        return response()->json([
+            'totale'    => (int) $espace->quantite,
+            'reservee'  => 0,
+            'restante'  => (int) $espace->quantite,
+            'error'     => 'Format date/heure invalide'
+        ], 400);
+    }
+
+    $fin = $debut->copy()->addHours($duree);
+
+    // Somme des quantités des réservations qui CHEVAUCHENT [debut, fin)
+    $quantiteReservee = Reservation::where('Id_Espace', $id)
+        ->whereIn('Statut_Reservation', ['en_attente', 'confirmee', 'terminee'])
+        ->where('date_debut', '<', $fin)
+        ->where('date_fin', '>', $debut)
+        ->sum('quantite_reservation');
+
+    $quantiteTotale = (int) $espace->quantite;
+    $placesRestantes = max(0, $quantiteTotale - (int) $quantiteReservee);
+
+    return response()->json([
+        'totale'   => $quantiteTotale,
+        'reservee' => (int) $quantiteReservee,
+        'restante' => (int) $placesRestantes,
+    ]);
+}
+
+        
+        
+        
 }

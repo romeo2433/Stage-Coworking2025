@@ -43,6 +43,13 @@
                     <label class="form-label fw-semibold">Numéro</label>
                     <input type="text" name="numero" class="form-control" value="{{ old('numero') }}" required placeholder="Ex : 034 00 000 00">
                 </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Type de client</label>
+                    <select name="Id_Type_Client" class="form-select">
+                        <option value="1" selected>Occasionnel</option>
+                        <option value="2">Abonné</option>
+                    </select>
+                </div>                
         
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Entreprise</label>

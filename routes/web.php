@@ -95,15 +95,14 @@ Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function ()
         Route::post('reservations/{reservation}/confirm', [\App\Http\Controllers\Admin\ReservationController::class, 'confirm'])->name('reservations.confirm');
         Route::post('reservations/{reservation}/reject', [\App\Http\Controllers\Admin\ReservationController::class, 'reject'])->name('reservations.reject');
         Route::get('espaces/{id}/heures-disponibles', [App\Http\Controllers\Admin\ReservationAdminController::class, 'heuresDisponibles']);
-
+        Route::put('/reservations/{id}/update-duree', [\App\Http\Controllers\Admin\ReservationController::class, 'updateDuree'])->name('reservations.update_duree');
        // Route::get('/paiements', [AdminPaiementController::class, 'index'])->name('paiements.index');
-   
-    
     // Bouton Payer
         //Route::get('reservations/montre', [AdminReservationController::class, 'montre'])->name('reservations.montre');
         Route::post('/reservations/{id}/payer', [AdminPaiementController::class, 'payer'])->name('reservations.payer'); 
         Route::get('finance', [AdminPaiementController::class, 'index'])->name('finance.index');
         Route::get('paiements', [AdminPaiementController::class, 'index'])->name('paiements.index');
+        Route::get('paiements/pdf/{id}', [AdminPaiementController::class, 'exportOnePdf'])->name('paiements.pdf.one');
 
 
         Route::get('/reservations/create', [ReservationAdminController::class, 'create'])->name('reservations.create');
@@ -130,7 +129,9 @@ Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function ()
         Route::get('utilisateurs/create', [UserController::class, 'create'])->name('utilisateurs.create');
         Route::post('utilisateurs/store', [UserController::class, 'store'])->name('utilisateurs.store');
         Route::post('/utilisateurs/NouveauUtilisateur', [UserController::class, 'NouveauUtilisateur'])->name('utilisateurs.NouveauUtilisateur');
-        
+        Route::get('utilisateurs', [UserController::class, 'index'])->name('utilisateurs.show');
+
+
     // Équipements
         Route::get('/equipements', [EquipementController::class, 'index'])->name('equipements.index');
         Route::post('/equipements', [EquipementController::class, 'store'])->name('equipements.store');
@@ -158,11 +159,26 @@ Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function ()
         Route::delete('equipements/type/{id}', [EquipementController::class, 'destroyType'])->name('typesequipements.destroy');
     
         Route::get('/etat-analytique', [EtatAnalytiqueController::class, 'index'])->name('etat_analytique');
+   
+   
+
+        Route::get('/etat-analytique/pdf', [EtatAnalytiqueController::class, 'exportPdf'])
+        ->name('etat_analytique.pdf');
+
+    Route::get('/etat-analytique/excel', [EtatAnalytiqueController::class, 'exportExcel'])
+        ->name('etat_analytique.excel');
     });
    
    
 
-
    
 
-    
+  
+
+    Route::put('/admin/utilisateurs/{id}', [UserController::class, 'update'])->name('admin.utilisateurs.update');
+    Route::delete('/admin/utilisateurs/{id}', [UserController::class, 'destroy'])->name('admin.utilisateurs.destroy');
+
+    Route::get('/admin/espaces/{id}/places-restantes', [ReservationAdminController::class, 'placesRestantes']);
+
+
+
