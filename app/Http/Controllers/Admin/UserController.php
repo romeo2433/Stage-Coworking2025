@@ -124,10 +124,11 @@ class UserController extends Controller
             return redirect('admin/reservations/create')
             ->with('success', 'Utilisateur créé avec succès !');
         }
-    public function update(Request $request, $id)
+        public function update(Request $request, $id)
         {
             $utilisateur = Utilisateur::findOrFail($id);
-
+        
+            // Validation
             $request->validate([
                 'Prenom' => 'required|string|max:255',
                 'Nom' => 'required|string|max:255',
@@ -136,18 +137,31 @@ class UserController extends Controller
                 'Entreprise' => 'nullable|string|max:255',
                 'Id_Type_Client' => 'required|exists:type_clients,Id_Type_Client',
             ]);
-
-            $utilisateur->Prenom = $request->Prenom;
-            $utilisateur->Nom = $request->Nom;
-            $utilisateur->email = $request->email;
-            $utilisateur->numero = $request->numero;
-            $utilisateur->Entreprise = $request->Entreprise;
-            $utilisateur->Id_Type_Client = $request->Id_Type_Client;
-            $utilisateur->save();
-
+        
+            // Mise à jour
+            $utilisateur->update([
+                'Prenom' => $request->Prenom,
+                'Nom' => $request->Nom,
+                'email' => $request->email,
+                'numero' => $request->numero,
+                'Entreprise' => $request->Entreprise,
+                'Id_Type_Client' => $request->Id_Type_Client,
+            ]);
+        
+            // Si la requête est AJAX → réponse JSON
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Utilisateur mis à jour avec succès',
+                    'utilisateur' => $utilisateur
+                ]);
+            }
+        
+            // Sinon → redirect classique
             return redirect()->route('admin.utilisateurs.show')
-                ->with('success', 'Utilisateur mis à jour avec succès.');
+                             ->with('success', 'Utilisateur mis à jour avec succès.');
         }
+        
     public function destroy($id)
         {
             $utilisateur = Utilisateur::findOrFail($id);

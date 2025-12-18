@@ -130,15 +130,40 @@
                                     <td>{{ \Carbon\Carbon::parse($h->date_debut)->format('d/m/Y H:i') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($h->date_fin)->format('d/m/Y H:i') }}</td>                                    
                                     <td>
-                                        {{ $h->duree_heures }}
-                                        @if($h->abonnement)
-                                            @if($h->abonnement->Type_Abonnement === 'journalier')
-                                                jour(s)
-                                            @elseif($h->abonnement->Type_Abonnement === 'mensuel')
-                                                mois
-                                            @else h @endif
-                                        @else h @endif
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span>
+                                                {{ $h->duree_heures }}
+                                                @if($h->abonnement)
+                                                    @if($h->abonnement->Type_Abonnement === 'journalier')
+                                                        jour(s)
+                                                    @elseif($h->abonnement->Type_Abonnement === 'mensuel')
+                                                        mois
+                                                    @else
+                                                        h
+                                                    @endif
+                                                @else
+                                                    h
+                                                @endif
+                                            </span>
+                                    
+                                            {{-- ICÔNE MODIFIER --}}
+                                            @if($h->Statut_Reservation === 'confirmee')
+                                            <i class="bi bi-pencil text-muted"
+                                               style="cursor:pointer"
+                                               title="Modifier la durée"
+                                               onclick="openEditModal(
+                                                    {{ $h->Id_Reservation }},
+                                                    '{{ $h->Id_Abonnement }}',
+                                                    {{ $h->duree_heures }}
+                                               )"
+                                               onmouseover="this.classList.add('text-warning')"
+                                               onmouseout="this.classList.remove('text-warning')">
+                                            </i>
+                                        @endif
+                                        
+                                        </div>
                                     </td>
+                                    
                                     <td>{{ number_format($h->total, 0, ',', ' ') }} Ar</td>
                                     <td>
                                         @switch($h->Statut_Reservation)
@@ -193,13 +218,12 @@
                                         @endif
                                     </td>    
                                     <td>
-                                        @if($h->Statut_Reservation !== 'terminee' && $h->Statut_Reservation !== 'annulee')
-                                            <button type="button" class="btn btn-warning btn-sm" 
-                                                    onclick="openEditModal({{ $h->Id_Reservation }}, '{{ $h->Id_Abonnement }}', {{ $h->duree_heures }})">
-                                                Modifier
-                                            </button>
+                                        @if($h->Statut_Reservation === 'confirmee')
+                                        <a href="{{ route('admin.finance.index', ['reservation_id' => $h->Id_Reservation]) }}"class="btn btn-success btn-sm">
+                                        <i class="bi bi-cash"></i> Payer</a>
                                         @endif
-                                    </td>                                    
+                                    </td>
+                                                                    
                                                                     
                                 </tr>
                             @empty

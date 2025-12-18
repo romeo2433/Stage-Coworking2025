@@ -36,87 +36,89 @@ class AdminPaiementController extends Controller
 
             // Filtre espace
             if ($request->filled('espace')) {
-            $query->whereHas('reservation.espace', function ($q) use ($request) {
-                $q->where('Id_Espace', $request->espace);
-            });
-        }        
+                $query->whereHas('reservation.espace', function ($q) use ($request) {
+                    $q->where('Id_Espace', $request->espace);
+                });
+            }        
 
         // Filtre mode de paiement
-        if ($request->filled('mode')) {
-            $query->whereHas('mode', function ($q) use ($request) {
-                $q->where('Type_Mode', 'like', '%' . $request->mode . '%');
-            });
-        }
+            if ($request->filled('mode')) {
+                    $query->whereHas('mode', function ($q) use ($request) {
+                    $q->where('Type_Mode', 'like', '%' . $request->mode . '%');
+                });
+            }
 
-        // Filtre statut paiement
-        if ($request->filled('statut')) {
-            $query->where('statut_paiement', $request->statut);
-        }
+            // Filtre statut paiement
+            if ($request->filled('statut')) {
+                $query->where('statut_paiement', $request->statut);
+            }
 
-        // Filtre sur date de paiement
-        if ($request->filled('date_debut')) {
-            $query->whereDate('date_paiement', '>=', $request->date_debut);
-        }
-        if ($request->filled('date_fin')) {
-            $query->whereDate('date_paiement', '<=', $request->date_fin);
-        }
+            // Filtre sur date de paiement
+            if ($request->filled('date_debut')) {
+                $query->whereDate('date_paiement', '>=', $request->date_debut);
+            }
+            if ($request->filled('date_fin')) {
+                $query->whereDate('date_paiement', '<=', $request->date_fin);
+            }
 
-        // Filtrer uniquement les paiements avec statut payé ou partiel
-        if (!$request->filled('statut')) {
-            $query->whereIn('statut_paiement', ['paye', 'partiel']);
-        }
-        // Filtre par mois
-        if ($request->filled('mois')) {
-            $query->whereMonth('date_paiement', $request->mois);
-        }
+            // Filtrer uniquement les paiements avec statut payé ou partiel
+            if (!$request->filled('statut')) {
+                $query->whereIn('statut_paiement', ['paye', 'partiel']);
+            }
+            // Filtre par mois
+            if ($request->filled('mois')) {
+                $query->whereMonth('date_paiement', $request->mois);
+            }
 
-        // Filtre par année
-        if ($request->filled('annee')) {
-            $query->whereYear('date_paiement', $request->annee);
-        }
+            // Filtre par année
+            if ($request->filled('annee')) {
+                $query->whereYear('date_paiement', $request->annee);
+            }
 
-        $totalPaid = $query->sum('montant_payer');
-        $paiements = $query->orderBy('created_at', 'desc')
-        ->paginate(10)
-        ->withQueryString();
-       
-          // Partie Réservations
-    
-    $queryRes = Reservation::with('utilisateur', 'espace')
-    ->where('Statut_Reservation', 'confirmee');
+            $totalPaid = $query->sum('montant_payer');
+            $paiements = $query->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+        
+            // Partie Réservations
+        
+            $queryRes = Reservation::with('utilisateur', 'espace')
+            ->where('Statut_Reservation', 'confirmee');
 
-        if ($request->filled('reference')) {
-            $queryRes->where('Reference', 'like', '%' . $request->reference . '%');
-        }
+            if ($request->filled('reference')) {
+                $queryRes->where('Reference', 'like', '%' . $request->reference . '%');
+            }
 
-        if ($request->filled('nom_utilisateur')) {
-            $queryRes->whereHas('utilisateur', function ($q) use ($request) {
+            if ($request->filled('nom_utilisateur')) {
+                $queryRes->whereHas('utilisateur', function ($q) use ($request) {
                 $q->where('Nom', 'like', '%'.$request->nom_utilisateur.'%')
                 ->orWhere('Prenom', 'like', '%'.$request->nom_utilisateur.'%');
-            });
-        }
+                });
+            }
 
-        $reservations = $queryRes->orderBy('created_at', 'desc')->get();
-        $modes = Mode::all();
-        return view('admin.finance.index', compact(
-            'paiements',
-            'espaces',
-            'totalPaid',
-            'reservations',
-            'modes'
-        ));
+            $reservations = $queryRes->orderBy('created_at', 'desc')->get();
+            $modes = Mode::all();
+            $selectedReservationId = request('reservation_id');
+            return view('admin.finance.index', compact(
+                'paiements',
+                'espaces',
+                'totalPaid',
+                'reservations',
+                'modes',
+                'selectedReservationId'
+            ));
         }
     
 
-        public function payer(Request $request, $reservation_id)
+    public function payer(Request $request, $reservation_id)
         {
             $reservation = Reservation::findOrFail($reservation_id);
         
             $paiement = $reservation->paiement ?? Paiement::create([
                 'Id_Reservation'  => $reservation->Id_Reservation,
-                'Reference'       => $request->Reference ?? 'PAY-' . strtoupper(uniqid()),
+                'Reference'       => $request->Reference,
                 'Id_Mode'         => $request->Id_Mode ?? 1,
-                'montant_payer'   => 0,
+                'montant_payer'   => 0, 
                 'montant_Impayer' => $reservation->total,
                 'statut_paiement' => 'en_attente',
                 'date_paiement'   => $request->date_paiement ?? null,
@@ -135,6 +137,7 @@ class AdminPaiementController extends Controller
                     'montant_payer'   => $reservation->total,
                     'montant_Impayer' => 0,
                     'statut_paiement' => 'paye',
+                    'Reference'     => $request->Reference,
                     'date_paiement'   => $paiement->date_paiement ?? now(),
                 ]);
         
@@ -155,7 +158,7 @@ class AdminPaiementController extends Controller
             // Ancien comportement (si appel direct)
             return redirect()->back()->with('success', 'Paiement enregistré avec succès !');
         }
-        public function exportOnePdf($id)
+    public function exportOnePdf($id)
         {
             try {
                 // Récupérer le paiement avec ses relations

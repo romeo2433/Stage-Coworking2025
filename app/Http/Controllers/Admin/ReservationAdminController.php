@@ -29,7 +29,7 @@ class ReservationAdminController extends Controller
             });
         }
     
-        $utilisateurs = $query->limit(2)->get();
+        $utilisateurs = $query->paginate(10)->withQueryString();
     
         $abonnements = Abonnement::where('Status_Abonnement', 'actif')->get();
     

@@ -71,9 +71,14 @@
                                 @endphp
                                 <form action="{{ route('admin.reservations.payer', $res->Id_Reservation) }}" method="POST">
                                     @csrf
-                                    <tr>
+                                    <tr class="{{ isset($selectedReservationId) && $selectedReservationId == $res->Id_Reservation ? 'table-danger'  : '' }}">
                                         <td class="text-center">
-                                            <input type="checkbox" class="form-check-input reservation-checkbox" data-montant="{{ $montant }}">
+                                            <input type="checkbox"
+                                            class="form-check-input reservation-checkbox"
+                                            name="reservations[]"
+                                            value="{{ $res->Id_Reservation }}"
+                                            data-montant="{{ $montant }}"
+                                            {{ isset($selectedReservationId) && $selectedReservationId == $res->Id_Reservation ? 'checked' : '' }}>
                                         </td>
                                         <td>
                                             <small class="fw-semibold">{{ $res->utilisateur->Prenom ?? '' }} {{ $res->utilisateur->Nom ?? '' }}</small>
@@ -103,8 +108,8 @@
                             
                                         <!-- Champs Paiement séparés en colonnes -->
                                         <td>
-                                            <input type="text" name="Reference" class="form-control form-control-sm" placeholder="Réf. paiement" value="{{ $paiement->Reference ?? '' }}">
-                                        </td>
+                                            <input type="text" name="Reference" class="form-control form-control-sm" placeholder="Réf. paiement" value="{{ $paiement->Reference ?? '' }}"required>
+                                        </td>                                        
                                         <td>
                                             <input type="date" 
                                                    name="date_paiement" 
@@ -124,7 +129,7 @@
                                         </td>
                                         <td>
                                             <button type="submit" class="btn btn-primary btn-sm w-100 py-1">
-                                                <i class="bi bi-currency-dollar me-1"></i> {{ $paiement ? 'Sauvegarder' : 'Payer' }}
+                                                </i> {{ $paiement ? 'Sauvegarder' : 'Payer' }}
                                             </button>
                                         </td>
                                     </tr>

@@ -18,5 +18,10 @@ class ModeSeeder extends Seeder
             ['Type_Mode' => 'Mobile Money',      'created_at' => $now, 'updated_at' => $now],
             ['Type_Mode' => 'Virement bancaire', 'created_at' => $now, 'updated_at' => $now],
         ]);
+
+        DB::table('type_client')->insert([
+            ['type' => 'Occasionnel',           'created_at' => $now, 'updated_at' => $now],
+            ['type' => 'Abonne',                'created_at' => $now, 'updated_at' => $now],
+        ]);
     }
 }

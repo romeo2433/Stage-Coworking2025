@@ -81,7 +81,7 @@ class ReservationController extends Controller
             $reservation = Reservation::findOrFail($id);
 
             // Vérifier si modifiable
-            if (!in_array($reservation->Statut_Reservation, ['confirmee', 'payee'])) {
+            if (!in_array($reservation->Statut_Reservation, ['confirmee'])) {
                 return back()->with('error', 'Impossible de modifier cette réservation.');
             }
 
@@ -95,7 +95,6 @@ class ReservationController extends Controller
 
             $duree = $request->duree;
 
-            // ----- RESEAU ABONNEMENT -----
             if ($request->Id_Abonnement) {
 
                 $abo = Abonnement::find($request->Id_Abonnement);
