@@ -37,18 +37,24 @@ class StatistiquesController extends Controller
         ];
     
         // 5. Revenu mensuel (basé sur created_at des réservations payées/terminées)
-        $revenusParMois = DB::table('reservations')
-            ->selectRaw('YEAR(created_at) as annee, MONTH(created_at) as mois, SUM(total) as total')
-            ->whereIn('Statut_Reservation', ['payee', 'terminee'])
-            ->groupBy('annee', 'mois')
-            ->orderBy('annee')
-            ->orderBy('mois')
-            ->get()
-            ->map(fn($row) => [
-                'label' => $row->annee . '-' . str_pad($row->mois, 2, '0', STR_PAD_LEFT),
-                'total' => (int)$row->total
-            ])->toArray();
-    
+        // 5. Revenu mensuel basé sur la date de paiement réelle
+        $revenusParMois = DB::table('paiements')->selectRaw('
+            YEAR(date_paiement) as annee,
+            MONTH(date_paiement) as mois,
+            SUM(montant_payer) as total
+        ')
+        ->whereIn('statut_paiement', ['paye', 'partiel'])
+        ->whereNotNull('date_paiement')
+        ->groupBy('annee', 'mois')
+        ->orderBy('annee')
+        ->orderBy('mois')
+        ->get()
+        ->map(fn ($row) => [
+            'label' => $row->annee . '-' . str_pad($row->mois, 2, '0', STR_PAD_LEFT),
+            'total' => (float) $row->total
+        ])
+        ->toArray();
+
         // 6. Réservations par mois (toutes terminées)
         $reservationsParMois = DB::table('reservations')
             ->selectRaw('YEAR(created_at) as annee, MONTH(created_at) as mois, COUNT(*) as total')

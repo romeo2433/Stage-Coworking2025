@@ -96,7 +96,7 @@
                     <li class="nav-item mb-2">
                         <a href="{{ route('admin.statistiques.index') }}" 
                            class="nav-link {{ request()->routeIs('admin.statistiques.index') ? 'active' : '' }}">
-                            <i class="fas fa-chart-line me-2"></i> Statistiques
+                            <i class="fas fa-chart-line me-2"></i> Tableau de Bord
                         </a>
                     </li>
             

@@ -11,6 +11,7 @@ use App\Models\Reservation;
 use App\Models\Equipement;
 use App\Models\TypeClient;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 
 class UserController extends Controller
@@ -96,7 +97,7 @@ class UserController extends Controller
             return redirect()->route('admin.dashboard')->with('success', 'Réservation créée avec succès.');
         }
 
-    public function NouveauUtilisateur(Request $request)
+        public function NouveauUtilisateur(Request $request)
         {
             $request->validate([
                 'Prenom' => 'required|string|max:255',
@@ -104,62 +105,27 @@ class UserController extends Controller
                 'email' => 'required|email|unique:utilisateurs,email',
                 'numero' => 'required|string|max:20|unique:utilisateurs,numero',
                 'Entreprise' => 'nullable|string|max:255',
-                'password' => 'required|string|min:6|confirmed',
                 'Id_Type_Client' => 'nullable|exists:type_clients,Id_Type_Client',
-            ]);            
-    
+            ]);
+        
+            //  Mot de passe = numéro de téléphone
+            $password = $request->numero;
+        
             $user = new Utilisateur();
             $user->Prenom = $request->Prenom;
             $user->Nom = $request->Nom;
             $user->email = $request->email;
             $user->numero = $request->numero;
             $user->Entreprise = $request->Entreprise;
-            $user->password =$request->password;
+            $user->password = Hash::make($password); 
             $user->date_inscription = Carbon::now()->toDateString();
             $user->Id_Profil = 4;
             $user->Id_Type_Client = $request->Id_Type_Client;
-
+        
             $user->save();
-    
+        
             return redirect('admin/reservations/create')
-            ->with('success', 'Utilisateur créé avec succès !');
-        }
-        public function update(Request $request, $id)
-        {
-            $utilisateur = Utilisateur::findOrFail($id);
-        
-            // Validation
-            $request->validate([
-                'Prenom' => 'required|string|max:255',
-                'Nom' => 'required|string|max:255',
-                'email' => 'required|email|unique:utilisateurs,email,' . $id . ',Id_Utilisateur',
-                'numero' => 'required|string|max:20|unique:utilisateurs,numero,' . $id . ',Id_Utilisateur',
-                'Entreprise' => 'nullable|string|max:255',
-                'Id_Type_Client' => 'required|exists:type_clients,Id_Type_Client',
-            ]);
-        
-            // Mise à jour
-            $utilisateur->update([
-                'Prenom' => $request->Prenom,
-                'Nom' => $request->Nom,
-                'email' => $request->email,
-                'numero' => $request->numero,
-                'Entreprise' => $request->Entreprise,
-                'Id_Type_Client' => $request->Id_Type_Client,
-            ]);
-        
-            // Si la requête est AJAX → réponse JSON
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Utilisateur mis à jour avec succès',
-                    'utilisateur' => $utilisateur
-                ]);
-            }
-        
-            // Sinon → redirect classique
-            return redirect()->route('admin.utilisateurs.show')
-                             ->with('success', 'Utilisateur mis à jour avec succès.');
+                ->with('success', 'Utilisateur créé avec succès. Mot de passe = numéro de téléphone.');
         }
         
     public function destroy($id)
