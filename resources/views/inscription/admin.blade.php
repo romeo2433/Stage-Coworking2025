@@ -24,6 +24,19 @@
             <label for="email" class="form-label">Adresse email</label>
             <input type="email" name="email" class="form-control" required value="{{ old('email') }}">
         </div>
+        <div class="mb-3">
+            <label for="Id_Profil" class="form-label">Profil</label>
+            <select name="Id_Profil" class="form-select" required>
+                <option value="">-- Choisir le profil --</option>
+                <option value="1" {{ old('Id_Profil') == 1 ? 'selected' : '' }}>
+                    Administrateur 
+                </option>
+                <option value="3" {{ old('Id_Profil') == 3 ? 'selected' : '' }}>
+                    Employer
+                </option>
+            </select>
+        </div>
+        
 
         <div class="mb-3">
             <label for="password" class="form-label">Mot de passe</label>

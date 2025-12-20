@@ -127,6 +127,44 @@ class UserController extends Controller
             return redirect('admin/reservations/create')
                 ->with('success', 'Utilisateur créé avec succès. Mot de passe = numéro de téléphone.');
         }
+
+        public function update(Request $request, $id)
+        {
+            $utilisateur = Utilisateur::findOrFail($id);
+        
+            // Validation
+            $request->validate([
+                'Prenom' => 'required|string|max:255',
+                'Nom' => 'required|string|max:255',
+                'email' => 'required|email|unique:utilisateurs,email,' . $id . ',Id_Utilisateur',
+                'numero' => 'required|string|max:20|unique:utilisateurs,numero,' . $id . ',Id_Utilisateur',
+                'Entreprise' => 'nullable|string|max:255',
+                'Id_Type_Client' => 'required|exists:type_clients,Id_Type_Client',
+            ]);
+        
+            // Mise à jour
+            $utilisateur->update([
+                'Prenom' => $request->Prenom,
+                'Nom' => $request->Nom,
+                'email' => $request->email,
+                'numero' => $request->numero,
+                'Entreprise' => $request->Entreprise,
+                'Id_Type_Client' => $request->Id_Type_Client,
+            ]);
+        
+            // Si la requête est AJAX → réponse JSON
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Utilisateur mis à jour avec succès',
+                    'utilisateur' => $utilisateur
+                ]);
+            }
+        
+            // Sinon → redirect classique
+            return redirect()->route('admin.utilisateurs.show')
+                             ->with('success', 'Utilisateur mis à jour avec succès.');
+        }
         
     public function destroy($id)
         {

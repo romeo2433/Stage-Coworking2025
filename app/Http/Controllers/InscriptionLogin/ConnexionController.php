@@ -41,11 +41,15 @@ class ConnexionController extends Controller
             ]);
 
             // Redirection selon le profil
-            if ($utilisateur->Id_Profil == 1) {
-                return redirect()->route('admin.dashboard')->with('success', 'Bienvenue, administrateur !');
+           // Redirection selon le profil
+            if (in_array($utilisateur->Id_Profil, [1, 3])) {
+                return redirect()->route('admin.dashboard')
+                    ->with('success', 'Bienvenue dans l’espace administrateur !');
             } else {
-                return redirect()->route('user.dashboard')->with('success', 'Connexion réussie !');
+                return redirect()->route('user.dashboard')
+                    ->with('success', 'Connexion réussie !');
             }
+
         }
     // Déconnexion
     public function logout()

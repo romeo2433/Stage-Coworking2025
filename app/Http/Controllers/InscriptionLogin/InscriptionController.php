@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Utilisateur;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -70,18 +71,23 @@ class InscriptionController extends Controller
             'Nom' => 'required|string|max:50',
             'email' => 'required|email|max:50|unique:utilisateurs,email',
             'password' => 'required|string|min:6|confirmed',
+    
+            // 🔒 SEULEMENT 1 ou 3
+            'Id_Profil' => ['required', Rule::in([1, 3])],
         ]);
-
+    
         Utilisateur::create([
             'numero' => $validatedData['numero'],
             'Prenom' => $validatedData['Prenom'],
             'Nom' => $validatedData['Nom'],
             'email' => $validatedData['email'],
-            'password' => $validatedData['password'],
+            'password'=> $validatedData['password'],
             'date_inscription' => Carbon::now(),
-            'Id_Profil' => 1,
+            'Id_Profil' => $validatedData['Id_Profil'],
         ]);
-
-        return redirect()->route('connexion.create')->with('success', 'Administrateur créé avec succès !');
+    
+        return redirect()
+            ->route('connexion.create')
+            ->with('success', 'Compte administrateur créé avec succès !');
     }
 }
