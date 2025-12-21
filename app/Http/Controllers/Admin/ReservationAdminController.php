@@ -52,11 +52,12 @@ class ReservationAdminController extends Controller
            'duree_mois' => 'nullable|numeric|min:0',
            'equipements' => 'array'
        ]);
+       //dd(session()->all());
    
        $utilisateur = Utilisateur::where('email', $request->email_client)->firstOrFail();
        $espace = Espace::findOrFail($request->Id_Espace);
        $quantite = $request->quantite_reservation;
-   
+       
        // Construction date début + fin
        $debut = new \DateTime($request->date_debut.' '.$request->heure_debut);
    
@@ -127,7 +128,8 @@ class ReservationAdminController extends Controller
            'quantite_reservation' => $quantite,
            'total' => $total,
            'Statut_Reservation' => 'confirmee',
-           'Id_Type' => 1
+           'Id_Type' => 1,
+           'created_by' => session('utilisateur')->Id_Utilisateur,
        ]);
    
        if ($request->has('equipements')) {

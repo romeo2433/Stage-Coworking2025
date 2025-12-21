@@ -32,6 +32,7 @@ return new class extends Migration
             $table->foreign('Id_Type')->references('Id_Type')->on('type_reservations')->onDelete('cascade');
             $table->foreign('Id_Espace')->references('Id_Espace')->on('espaces')->onDelete('cascade');
             $table->foreign('Id_Utilisateur')->references('Id_Utilisateur')->on('utilisateurs')->onDelete('cascade');
+            $table->foreignId('created_by')->nullable()->constrained('utilisateurs')->onDelete('set null');    
         });
     }
 

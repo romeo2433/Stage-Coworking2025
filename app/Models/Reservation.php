@@ -25,7 +25,8 @@ class Reservation extends Model
         'Id_Type',
         'Id_Espace',
         'quantite_reservation',
-        'Id_Utilisateur'
+        'Id_Utilisateur',
+        'created_by',
     ];
 
     // Relations
@@ -65,6 +66,10 @@ class Reservation extends Model
     public function checkin()
     {
         return $this->hasOne(\App\Models\Checkin::class, 'Id_Reservation', 'Id_Reservation');
+    }
+    public function createur()
+    {
+        return $this->belongsTo(Utilisateur::class, 'created_by');
     }
 
 

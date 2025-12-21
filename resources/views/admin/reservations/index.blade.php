@@ -118,6 +118,7 @@
                                 <th>Durée</th>
                                 <th>Prix</th>
                                 <th>Statut</th>
+                                <th>Réservé par</th>
                                 <th>Check-in / Check-out</th>
                             </tr>
                         </thead>
@@ -174,6 +175,13 @@
                                             @case('annulee') <span class="badge bg-danger">Annulée</span> @break
                                             @default <span class="badge bg-dark">Inconnu</span>
                                         @endswitch
+                                    </td>
+                                    <td>
+                                        @if($h->createur)
+                                            <strong>{{ $h->createur->Prenom }} {{ $h->createur->Nom }}</strong>
+                                        @else
+                                            <em class="text-muted">Système / Client</em>
+                                        @endif
                                     </td>
                                     <td>
                                         @php 

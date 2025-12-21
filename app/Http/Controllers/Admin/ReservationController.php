@@ -16,7 +16,7 @@ class ReservationController extends Controller
    public function index(Request $request)
     {
         $espaces = Espace::orderBy('Nom')->get();
-        $query = Reservation::with('utilisateur', 'espace')
+        $query = Reservation::with('utilisateur', 'espace', 'createur')
             ->whereNot('Statut_Reservation', 'en_attente');
             
     
