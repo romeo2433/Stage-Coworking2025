@@ -189,19 +189,33 @@ class PlanningController extends Controller
                 ->orderBy('date_debut')
                 ->get();
         
-            $events = $reservations->map(function ($r) {
-                $espace = $r->espace ? $r->espace->Nom : 'Espace inconnu';
-                $client = $r->utilisateur ? $r->utilisateur->nom : 'Client inconnu';
-        
-                return [
-                    'title' => $client . ' - ' . $espace,
-                    'start' => $r->date_debut,
-                    'end' => $r->date_fin,
-                    'backgroundColor' => '#4e73df',
-                    'borderColor' => '#2e59d9',
-                    'textColor' => '#fff',
-                ];
-            });
+                $events = $reservations->map(function ($r) {
+                    $espace = $r->espace ? $r->espace->Nom : 'Espace inconnu';
+                    $client = $r->utilisateur ? $r->utilisateur->Nom . ' ' . $r->utilisateur->Prenom : 'Client inconnu';
+                    $telephone = $r->utilisateur ? $r->utilisateur->numero : 'Non renseigné';
+                
+                    return [
+                        'id' => $r->Id_Reservation, // utile si tu veux faire des actions plus tard
+                        'title' => $espace . ' - ' . $client,
+                        'start' => $r->date_debut,
+                        'end' => $r->date_fin,
+                        'backgroundColor' => '#4e73df',
+                        'borderColor' => '#2e59d9',
+                        'textColor' => '#fff',
+                
+                        // On ajoute toutes les infos qu'on veut afficher dans la modale
+                        'extendedProps' => [
+                            'client' => $client,
+                            'telephone' => $telephone,
+                            'email' => $r->utilisateur?->email ?? 'Non renseigné',
+                            'espace' => $espace,
+                            'date_debut' => \Carbon\Carbon::parse($r->date_debut)->format('d/m/Y H:i'),
+                            'date_fin' => \Carbon\Carbon::parse($r->date_fin)->format('d/m/Y H:i'),
+                            'statut' => $r->Statut_Reservation ?? 'Non défini',
+                            // Ajoute ici tout autre champ que tu veux afficher
+                        ]
+                    ];
+                });
         
             return view('admin.planning.calendar', [
                 'events' => $events,
@@ -212,6 +226,5 @@ class PlanningController extends Controller
                 'disponibilite' => $disponibilite,
                 'toutesLesHeures' => $toutesLesHeures,
             ]);
-        }
-        
+        }      
 }

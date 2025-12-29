@@ -21,13 +21,38 @@ class UserController extends Controller
         {
             return view('admin.utilisateurs.create');
         }
-    public function index()
+    public function index(Request $request)
         {
+            $query = Utilisateur::with('typeClient')
+                ->where('Id_Profil', 4); // filtre obligatoire
+        
+            // Recherche texte (Prenom, Nom, Email, Numéro)
+            if ($request->filled('q')) {
+                $q = $request->q;
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('Prenom', 'like', "%$q%")
+                        ->orWhere('Nom', 'like', "%$q%")
+                        ->orWhere('email', 'like', "%$q%")
+                        ->orWhere('numero', 'like', "%$q%");
+                });
+            }
+        
+            // 🏷 Type de client
+            if ($request->filled('Id_Type_Client')) {
+                $query->where('Id_Type_Client', $request->Id_Type_Client);
+            }
+        
+            $utilisateurs = $query
+                ->orderBy('Id_Utilisateur', 'desc')
+                ->paginate(10)
+                ->appends($request->query()); 
+        
             $typeClients = TypeClient::all();
-            $utilisateurs = Utilisateur::with('typeClient')->get();
-            
+        
             return view('admin.utilisateurs.show', compact('utilisateurs', 'typeClients'));
         }
+        
+        
         
         
 
@@ -99,33 +124,30 @@ class UserController extends Controller
 
         public function NouveauUtilisateur(Request $request)
         {
-            $request->validate([
-                'Prenom' => 'required|string|max:255',
-                'Nom' => 'required|string|max:255',
-                'email' => 'required|email|unique:utilisateurs,email',
-                'numero' => 'required|string|max:20|unique:utilisateurs,numero',
-                'Entreprise' => 'nullable|string|max:255',
+            $validated = $request->validate([
+                'Prenom'         => 'required|string|max:255',
+                'Nom'            => 'required|string|max:255',
+                'email'          => 'required|email|unique:utilisateurs,email',
+                'numero'         => 'required|string|max:20|unique:utilisateurs,numero',
+                'Entreprise'     => 'nullable|string|max:255',
                 'Id_Type_Client' => 'nullable|exists:type_clients,Id_Type_Client',
             ]);
-        
-            //  Mot de passe = numéro de téléphone
-            $password = $request->numero;
-        
-            $user = new Utilisateur();
-            $user->Prenom = $request->Prenom;
-            $user->Nom = $request->Nom;
-            $user->email = $request->email;
-            $user->numero = $request->numero;
-            $user->Entreprise = $request->Entreprise;
-            $user->password = Hash::make($password); 
-            $user->date_inscription = Carbon::now()->toDateString();
-            $user->Id_Profil = 4;
-            $user->Id_Type_Client = $request->Id_Type_Client;
-        
-            $user->save();
-        
+
+            // Le mot de passe sera automatiquement hashé grâce au mutateur dans le modèle
+            Utilisateur::create([
+                'Prenom'           => $validated['Prenom'],
+                'Nom'              => $validated['Nom'],
+                'email'            => $validated['email'],
+                'numero'           => $validated['numero'],
+                'Entreprise'       => $validated['Entreprise'],
+                'password'         => $validated['numero'], 
+                'date_inscription' => Carbon::today(),
+                'Id_Profil'        => 4, 
+                'Id_Type_Client'   => $validated['Id_Type_Client'],
+            ]);
+
             return redirect('admin/reservations/create')
-                ->with('success', 'Utilisateur créé avec succès. Mot de passe = numéro de téléphone.');
+                ->with('success', 'Utilisateur créé avec succès ! Mot de passe par défaut = son numéro de téléphone.');
         }
 
         public function update(Request $request, $id)

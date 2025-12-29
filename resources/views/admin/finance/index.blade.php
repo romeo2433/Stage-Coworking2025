@@ -169,8 +169,19 @@
                         <div class="col-md-3">
                             <input type="text" name="client" class="form-control form-control-sm" placeholder="Client" value="{{ request('client') }}">
                         </div>
-                        <div class="col-md-3">
+                        <!--  <div class="col-md-3">
                             <input type="text" name="reference" class="form-control form-control-sm" placeholder="Référence" value="{{ request('reference') }}">
+                        </div> -->
+                        <div class="col-md-3">
+                            <select name="enregistre_par" class="form-select form-select-sm">
+                                <option value="">-- Enregistré par --</option>
+                                @foreach($enregistreurs as $user)
+                                    <option value="{{ $user->Id_Utilisateur }}"
+                                        {{ request('enregistre_par') == $user->Id_Utilisateur ? 'selected' : '' }}>
+                                        {{ $user->Prenom }} {{ $user->Nom }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="col-md-3">
                             <select name="espace" class="form-control form-control-sm">
@@ -292,6 +303,7 @@
                                 <th>Mode</th>
                                 <th>Montant</th>
                                 <th>Statut</th>
+                                <th>Enregistré par</th>
                                 <th>Date</th>
                                 <th class="text-center">PDF</th> 
                             </tr>
@@ -333,6 +345,15 @@
                                             <span class="badge bg-warning text-dark badge-sm">Partiel</span>
                                         @else
                                             <span class="badge bg-secondary badge-sm">En attente</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($paiement->createur)
+                                            <small class="fw-semibold">
+                                                {{ $paiement->createur->Prenom }} {{ $paiement->createur->Nom }}
+                                            </small>
+                                        @else
+                                            <small class="text-muted">Système / Ancien</small>
                                         @endif
                                     </td>
                                     <td>

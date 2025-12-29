@@ -20,6 +20,7 @@ class Paiement extends Model
         'statut_paiement',
         'Id_Reservation',
         'Id_Mode',
+        'created_by',
     ];
 
     /**
@@ -36,5 +37,9 @@ class Paiement extends Model
     public function mode()
     {
         return $this->belongsTo(Mode::class, 'Id_Mode', 'Id_Mode');
+    }
+    public function createur()
+    {
+        return $this->belongsTo(Utilisateur::class, 'created_by');
     }
 }

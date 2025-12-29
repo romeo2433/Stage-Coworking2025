@@ -14,8 +14,8 @@
 
         <!-- Message de bienvenue personnalisé -->
         <h1 class="display-4 fw-bold text-primary mb-3">
-            Bienvenue !
-        </h1>
+            Bienvenue {{ session('utilisateur')->Prenom }} {{ session('utilisateur')->Nom }} !
+        </h1>        
         <p class="lead text-muted mb-5 px-4">
             Vous êtes connecté à la plateforme de gestion des réservations d'espaces de la CCIA.<br>
             Utilisez le menu latéral pour accéder aux différentes sections.

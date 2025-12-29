@@ -7,6 +7,7 @@ use App\Models\Paiement;
 use App\Models\Reservation;
 use App\Models\Espace;
 use App\Models\Mode;
+use App\Models\Utilisateur;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -18,7 +19,8 @@ class AdminPaiementController extends Controller
             $query = Paiement::with([
                 'reservation.utilisateur', 
                 'reservation.espace', 
-                'mode'
+                'mode',
+                'createur'
             ]);
 
             // Filtre Client
@@ -96,6 +98,20 @@ class AdminPaiementController extends Controller
                 });
             }
 
+            if ($request->filled('enregistre_par')) {
+                $query->where('created_by', $request->enregistre_par);
+            }
+            $totalPaid = $query->sum('montant_payer');
+
+            $paiements = $query->orderBy('created_at', 'desc')
+                ->paginate(10)
+                ->withQueryString();
+            // Récupère les employers et managers qui enregistrent des paiements (profils 3 et 4)
+            $enregistreurs = Utilisateur::whereIn('Id_Profil', [3,1])
+                ->orderBy('Prenom')
+                ->orderBy('Nom')
+                ->get();
+
             $reservations = $queryRes->orderBy('created_at', 'desc')->get();
             $modes = Mode::all();
             $selectedReservationId = request('reservation_id');
@@ -105,7 +121,8 @@ class AdminPaiementController extends Controller
                 'totalPaid',
                 'reservations',
                 'modes',
-                'selectedReservationId'
+                'selectedReservationId',
+                'enregistreurs'
             ));
         }
     
@@ -113,6 +130,7 @@ class AdminPaiementController extends Controller
     public function payer(Request $request, $reservation_id)
         {
             $reservation = Reservation::findOrFail($reservation_id);
+            
         
             $paiement = $reservation->paiement ?? Paiement::create([
                 'Id_Reservation'  => $reservation->Id_Reservation,
@@ -122,6 +140,7 @@ class AdminPaiementController extends Controller
                 'montant_Impayer' => $reservation->total,
                 'statut_paiement' => 'en_attente',
                 'date_paiement'   => $request->date_paiement ?? null,
+                
             ]);
         
             if ($request->filled('Reference') || $request->filled('date_paiement') || $request->filled('Id_Mode')) {
@@ -139,12 +158,9 @@ class AdminPaiementController extends Controller
                     'statut_paiement' => 'paye',
                     'Reference'     => $request->Reference,
                     'date_paiement'   => $paiement->date_paiement ?? now(),
+                    'created_by'      => session('utilisateur')->Id_Utilisateur,
                 ]);
-        
                 $reservation->update(['Statut_Reservation' => 'payee']);
-        
-                // Optionnel : générer la facture en arrière-plan
-                // (tu peux la générer plus tard ou via un job)
             }
         
             // RETOUR JSON AU LIEU DE REDIRECT

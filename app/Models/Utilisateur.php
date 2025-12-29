@@ -5,8 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Hash;
 
-class Utilisateur extends Model
+class Utilisateur extends Authenticatable
 {
     use SoftDeletes;
     use HasFactory;
@@ -19,6 +21,11 @@ class Utilisateur extends Model
         'numero', 'Prenom', 'Entreprise', 'email', 'Nom',
         'date_inscription', 'Id_Profil','password'
     ];
+    // Mutateur automatique : Laravel hashe le password à chaque création/modification
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
 
     public function profil()
     {

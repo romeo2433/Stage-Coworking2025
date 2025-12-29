@@ -101,7 +101,9 @@ Route::get('/reservations', [ReservationApiController::class, 'index'])->name('r
         Route::post('reservations/{reservation}/reject', [\App\Http\Controllers\Admin\ReservationController::class, 'reject'])->name('reservations.reject');
         Route::get('espaces/{id}/heures-disponibles', [App\Http\Controllers\Admin\ReservationAdminController::class, 'heuresDisponibles']);
         Route::put('/reservations/{id}/update-duree', [\App\Http\Controllers\Admin\ReservationController::class, 'updateDuree'])->name('reservations.update_duree');
-    
+        Route::get('reservation/{id}', [\App\Http\Controllers\Admin\ReservationController::class, 'showAjax'])->name('reservation.ajax');
+
+
         // Paiements et finance
         Route::post('/reservations/{id}/payer', [AdminPaiementController::class, 'payer'])->name('reservations.payer');
         Route::get('finance', [AdminPaiementController::class, 'index'])->name('finance.index');
@@ -131,7 +133,8 @@ Route::get('/reservations', [ReservationApiController::class, 'index'])->name('r
         Route::get('planning/calendar', [PlanningController::class, 'calendar'])->name('planning.calendar');
         Route::post('reservations/{id}/checkin', [PlanningController::class, 'checkin'])->name('reservations.checkin');
         Route::post('reservations/{id}/checkout', [PlanningController::class, 'checkout'])->name('reservations.checkout');
-    
+        Route::get('reservations/{id}/duree-max',[ReservationController::class, 'getDureeMax'])->name('reservations.duree_max');
+        
         // ==================== ROUTES RÉSERVÉES UNIQUEMENT AU SUPER ADMIN (1) ====================
     
         Route::middleware('superadmin')->group(function () {
@@ -170,7 +173,8 @@ Route::get('/reservations', [ReservationApiController::class, 'index'])->name('r
             Route::get('/etat-analytique', [EtatAnalytiqueController::class, 'index'])->name('etat_analytique');
             Route::get('/etat-analytique/pdf', [EtatAnalytiqueController::class, 'exportPdf'])->name('etat_analytique.pdf');
             Route::get('/etat-analytique/excel', [EtatAnalytiqueController::class, 'exportExcel'])->name('etat_analytique.excel');
+       
+            Route::patch('reservations/{id}/annuler', [\App\Http\Controllers\Admin\ReservationController::class, 'annuler'])->name('reservation.annuler');
+            Route::delete('reservations/{id}/detruire', [\App\Http\Controllers\Admin\ReservationController::class, 'detruire'])->name('reservation.detruire');
         });
-    
     });
-   

@@ -72,7 +72,7 @@ class InscriptionController extends Controller
             'email' => 'required|email|max:50|unique:utilisateurs,email',
             'password' => 'required|string|min:6|confirmed',
     
-            // 🔒 SEULEMENT 1 ou 3
+            // SEULEMENT 1 ou 3
             'Id_Profil' => ['required', Rule::in([1, 3])],
         ]);
     

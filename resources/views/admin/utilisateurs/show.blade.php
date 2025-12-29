@@ -2,7 +2,39 @@
 
 @section('content')
 <div class="container mt-4">
-    <h3 class="mb-3">Liste des utilisateurs</h3>
+    <form method="GET" action="{{ route('admin.utilisateurs.show') }}" class="row g-2 mb-3">
+
+        <div class="col-md-4">
+            <input type="text" name="q" class="form-control"
+                   placeholder="Nom, prénom, email ou numéro"
+                   value="{{ request('q') }}">
+        </div>
+    
+        <div class="col-md-3">
+            <select name="Id_Type_Client" class="form-select">
+                <option value="">-- Type de client --</option>
+                @foreach($typeClients as $type)
+                    <option value="{{ $type->Id_Type_Client }}"
+                        {{ request('Id_Type_Client') == $type->Id_Type_Client ? 'selected' : '' }}>
+                        {{ $type->type }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">Rechercher</button>
+        </div>
+    
+        <div class="col-md-2">
+            <a href="{{ route('admin.utilisateurs.show') }}" class="btn btn-secondary w-100">
+                Réinitialiser
+            </a>
+        </div>
+    
+    </form>
+    
+    <h3 class="mb-3">Liste des clients</h3>
     <table class="table table-bordered">
         <thead class="table-dark">
             <tr>
@@ -62,10 +94,15 @@
             @endforeach
         </tbody>
     </table>
+    <div class="mt-3">
+    {{ $utilisateurs->links('pagination::bootstrap-5') }}
+</div>
+
     <a href="{{ route('admin.reservations.create') }}" class="btn btn-secondary mt-3">
         Retour
     </a>
 </div>
+
 
 <script>
     document.querySelectorAll('.btn-edit').forEach(btn => {

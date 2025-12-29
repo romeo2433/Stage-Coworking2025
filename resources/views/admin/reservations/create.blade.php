@@ -91,9 +91,7 @@
                                 <option value="">-- Aucun abonnement --</option>
                                 @foreach($abonnements as $abo)
                                     <option value="{{ $abo->Id_Abonnement }}"
-                                            data-type="{{ $abo->Type_Abonnement }}"
-                                            data-tarif_journalier="{{ $abo->tarif_journalier ?? 0 }}"
-                                            data-tarif_mensuel="{{ $abo->tarif_mensuel ?? 0 }}">
+                                            data-type="{{ $abo->Type_Abonnement }}">
                                         {{ $abo->Nom_Abonnement }}
                                     </option>
                                 @endforeach
@@ -150,10 +148,15 @@
                         </div>
                         <!-- Total -->
                         <div>
-                            <label class="form-label fw-bold">Total (Ar)</label>
-                            <input type="text" id="total" class="form-control form-control-sm" readonly value="0 Ar">
+                            <label class="form-label fw-bold fs-5">Total (Ar)</label>
+                            <input type="text"
+                                   id="total"
+                                   class="form-control form-control-lg fw-bold text-end"
+                                   readonly
+                                   value="0 Ar">
                             <input type="hidden" name="total" id="total_hidden" value="0">
                         </div>
+                        
                     </div>
                     <!-- Indicateur disponibilité -->
                     <div id="disponibilite-indicator" class="mt-3 mb-3" style="display:none;">

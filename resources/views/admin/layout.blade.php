@@ -21,6 +21,14 @@
      <!-- Icone -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- Ou la version slim si tu veux -->
+<!-- <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script> -->
+
+
+<!-- Ton script personnalisé APRÈS jQuery -->
+    <script src="{{ asset('js/ton-script.js') }}"></script> <!-- ou inline -->
+
 
     <!-- STYLES SPÉCIFIQUES (surcharge possible) -->
     @yield('styles')
