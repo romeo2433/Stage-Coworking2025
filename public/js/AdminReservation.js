@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         const prixSpan = document.createElement('span');
                         prixSpan.className = 'text-muted me-3';
-                        prixSpan.textContent = '+ ' + parseInt(e.prix).toLocaleString('fr-FR') + ' Ar/unité';
+                        prixSpan.textContent = '+ ' + parseInt(e.prix).toLocaleString('fr-FR') + ' Ar/heure';
 
                         const quantiteInput = document.createElement('input');
                         quantiteInput.type = 'number';

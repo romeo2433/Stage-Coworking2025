@@ -196,6 +196,38 @@ class UserController extends Controller
             return redirect()->route('admin.utilisateurs.show')
                 ->with('success', 'Utilisateur supprimé avec succès.');
         }
-        
+
+        public function updateProfile(Request $request)
+        {
+            $request->validate([
+                'Id_Utilisateur' => 'required|exists:utilisateurs,Id_Utilisateur',
+                'Prenom' => 'required|string|max:255',
+                'Nom' => 'required|string|max:255',
+                'email' => 'required|email|unique:utilisateurs,email,' 
+                            . $request->Id_Utilisateur . ',Id_Utilisateur',
+                'numero' => 'nullable|string|max:20',
+                'password' => 'nullable|string|min:6|confirmed',
+            ]);
+
+            $user = Utilisateur::findOrFail($request->Id_Utilisateur);
+
+            // Mise à jour des champs de base
+            $user->Prenom = $request->Prenom;
+            $user->Nom = $request->Nom;
+            $user->email = $request->email;
+            $user->numero = $request->numero;
+
+            // Mise à jour du mot de passe si l'utilisateur en a fourni un
+            if ($request->filled('password')) {
+                $user->password = $request->password; 
+            }
+
+            $user->save(); // Sauvegarde tout
+
+            // Mettre à jour la session
+            session(['utilisateur' => $user]);
+
+            return back()->with('success', 'Profil mis à jour avec succès');
+        }
 
 }

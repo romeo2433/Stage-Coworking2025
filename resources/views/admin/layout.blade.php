@@ -107,20 +107,43 @@
                             <i class="fas fa-chart-line me-2"></i> Tableau de Bord
                         </a>
                     </li>
-            
-                    <!-- Déconnexion -->
-                    <li class="nav-item mt-4">
-                        <a class="nav-link text-danger" href="{{ route('logout') }}">
-                            <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
+
+
+                    @php
+                        $admin = session('utilisateur');
+                    @endphp
+
+                    @if($admin)
+                    <li class="nav-item dropdown mx-2">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center"
+                        href="#"
+                        data-bs-toggle="dropdown">
+
+                            <div class="rounded-circle bg-warning text-dark fw-bold d-flex justify-content-center align-items-center"
+                                style="width:36px;height:36px;">
+                                {{ strtoupper(substr($admin->Nom, 0, 1)) }}
+                            </div>
                         </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                    <i class="bi bi-person me-2"></i> Mon profil
+                                </a>
+                                <a class="nav-link text-danger" href="{{ route('logout') }}">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-            
+                    @endif
                 </ul>
             </div>
             
         </div>
     </nav>
 
+    
     <!-- CONTENU PRINCIPAL -->
     <main class="container">
         @yield('content')
@@ -144,5 +167,56 @@
 
      
     @yield('scripts')
+    @if($admin)
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+    
+                <form method="POST" action="{{ route('admin.profile.update') }}">
+                    @csrf
+                    @method('PUT')
+    
+                    <div class="modal-header">
+                        <h5 class="modal-title">Mon profil</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+    
+                    <div class="modal-body">
+                        <input type="hidden" name="Id_Utilisateur" value="{{ $admin->Id_Utilisateur }}">
+    
+                        <div class="mb-3">
+                            <label class="form-label">Prénom</label>
+                            <input type="text" name="Prenom" class="form-control" value="{{ $admin->Prenom }}" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="form-label">Nom</label>
+                            <input type="text" name="Nom" class="form-control" value="{{ $admin->Nom }}" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ $admin->email }}" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="form-label">Téléphone</label>
+                            <input type="text" name="numero" class="form-control" value="{{ $admin->numero }}">
+                        </div>
+                    </div>
+    
+                    <div class="modal-footer d-flex flex-column">
+                        <!-- Bouton Enregistrer -->
+                        <button type="submit" class="btn btn-success w-100 mb-2">Enregistrer</button>
+                    </div>
+    
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
+    
+
+    
 </body>
 </html>

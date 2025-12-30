@@ -7,6 +7,7 @@ use App\Models\Utilisateur;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -60,7 +61,12 @@ class InscriptionController extends Controller
     //Mamorona admnin   
     public function createAdmin()
     {
-        return view('inscription.admin');
+        // Récupérer uniquement les admins (1 = Super admin, 3 = Admin)
+        $admins = Utilisateur::whereIn('Id_Profil', [1, 3])
+            ->orderBy('Id_Utilisateur', 'desc')
+            ->get();
+
+        return view('inscription.admin', compact('admins'));
     }
     //Authentification Admin
     public function storeAdmin(Request $request)
@@ -89,5 +95,36 @@ class InscriptionController extends Controller
         return redirect()
             ->route('connexion.create')
             ->with('success', 'Compte administrateur créé avec succès !');
+    }
+    public function updateAdminAjax(Request $request, $id)
+    {
+        $request->validate([
+            'Prenom' => 'required|string|max:50',
+            'Nom'    => 'required|string|max:50',
+            'email'  => 'required|email|unique:utilisateurs,email,' . $id . ',Id_Utilisateur',
+            'numero' => 'nullable|string|max:20',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $admin = Utilisateur::whereIn('Id_Profil', [1, 3])
+            ->findOrFail($id);
+
+        $admin->Prenom = $request->Prenom;
+        $admin->Nom    = $request->Nom;
+        $admin->email  = $request->email;
+        $admin->numero = $request->numero;
+
+        // Changement de mot de passe (optionnel)
+        if ($request->filled('password')) {
+            $admin->password = $request->password;
+        }
+
+        $admin->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Administrateur mis à jour avec succès',
+            'admin'   => $admin
+        ]);
     }
 }

@@ -108,6 +108,7 @@
                             <option value="confirmee" @selected(request('statut')=='confirmee')>Confirmée</option>
                             <option value="terminee" @selected(request('statut')=='terminee')>Terminée</option>
                             <option value="annulee" @selected(request('statut')=='annulee')>Annulée</option>
+                            <option value="payee" @selected(request('statut')=='payee')>Payer</option>
                         </select>
                     </div>
                     <div class="col-md-2 d-flex gap-1">
@@ -288,16 +289,14 @@
                                                 <i class="bi bi-cash"></i> Payer
                                             </a>
                                     
-                                            @if(Auth::check() && Auth::user()->Id_Profil == 1)
-                                                <form action="{{ route('admin.reservation.annuler', $h->Id_Reservation) }}"
-                                                      method="POST" style="display:inline;"
-                                                      onsubmit="return confirm('Annuler cette réservation ?');">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit" class="btn btn-warning btn-sm me-1">
-                                                        <i class="bi bi-x-circle"></i> Annuler
-                                                    </button>
-                                                </form>
+                                            {{-- @if(Auth::check() && Auth::user()->Id_Profil == 1)--}}
+                                            <button type="button"
+                                            class="btn btn-warning btn-sm me-1"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#annulerModal{{ $h->Id_Reservation }}">
+                                            <i class="bi bi-x-circle"></i> 
+                                        </button>
+                                                
                                     
                                                 <form action="{{ route('admin.reservation.detruire', $h->Id_Reservation) }}"
                                                       method="POST" style="display:inline;"
@@ -305,17 +304,72 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm">
-                                                        <i class="bi bi-trash"></i> Supprimer
+                                                        <i class="bi bi-trash"></i> 
                                                     </button>
                                                 </form>
-                                            @endif
+                                                @elseif($h->Statut_Reservation === 'annulee')
+                                                <!-- Réservation annulée : on affiche le motif à la place des boutons -->
+                                                <div class="text-start">
+                                                    @if($h->observation)
+                                                        <small class="d-block text-muted">
+                                                            <strong>Motif :</strong><br>
+                                                            {{ $h->observation }}
+                                                        </small>
+                                                    @else
+                                                        <small class="d-block text-muted fst-italic">
+                                                            Aucun motif indiqué
+                                                        </small>
+                                                    @endif
+                                           {{-- @endif--}}
                                         @endif
                                     </td>
                                 </tr>
+                                     <!-- Modal d'annulation pour la réservation {{ $h->Id_Reservation }} -->
+                    <div class="modal fade" id="annulerModal{{ $h->Id_Reservation }}" tabindex="-1" aria-labelledby="annulerModalLabel{{ $h->Id_Reservation }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="annulerModalLabel{{ $h->Id_Reservation }}">
+                                        Annuler la réservation n°{{ $h->Id_Reservation }}
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                </div>
+
+                                <form action="{{ route('admin.reservation.annuler', $h->Id_Reservation) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <div class="modal-body">
+                                        <p>Voulez-vous vraiment annuler cette réservation ?</p>
+                                        
+                                        <div class="mb-3">
+                                            <label for="observation{{ $h->Id_Reservation }}" class="form-label">
+                                                Observation / Motif d'annulation <span class="text-danger">*</span>
+                                            </label>
+                                            <textarea class="form-control" 
+                                                    name="observation" 
+                                                    id="observation{{ $h->Id_Reservation }}" 
+                                                    rows="4" 
+                                                    required 
+                                                    placeholder="Ex: Client n'a pas venu, demande d'annulation, etc."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                        <button type="submit" class="btn btn-warning">
+                                            <i class="bi bi-x-circle"></i> Confirmer l'annulation
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                             @empty
                                 <tr>
                                     <td colspan="7" class="text-center text-muted">Aucune réservation trouvée</td>
                                 </tr>
+                             </div>
+
                             @endforelse
                         </tbody>
                     </table>
@@ -325,6 +379,8 @@
                     @foreach($reservations as $h)                    
                     @endforeach
 
+
+                   
                     <!-- MODALE DÉTAILS RÉSERVATION -->
                     <div class="modal fade" id="reservationDetailsModal" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-lg modal-dialog-centered">

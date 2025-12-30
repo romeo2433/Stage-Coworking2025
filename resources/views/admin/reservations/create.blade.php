@@ -27,7 +27,7 @@
                 <form method="GET" action="{{ route('admin.reservations.create') }}" class="mb-3 mt-3">
                     <label class="form-label fw-bold">Rechercher un client :</label>
                     <input type="text" name="search" class="form-control"
-                           placeholder="Tapez un nom ou email..." value="{{ request('search') }}">
+                           placeholder="Tapez un nom ou email ou entreprise..." value="{{ request('search') }}">
                     <button type="submit" class="btn btn-primary mt-2">Rechercher</button>
                 </form>
 

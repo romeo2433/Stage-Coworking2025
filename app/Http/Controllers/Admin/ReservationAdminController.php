@@ -25,7 +25,8 @@ class ReservationAdminController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('Prenom', 'like', "%$search%")
                   ->orWhere('Nom', 'like', "%$search%")
-                  ->orWhere('email', 'like', "%$search%");
+                  ->orWhere('email', 'like', "%$search%")
+                  ->orWhere('Entreprise', 'like', "%$search%");
             });
         }
     

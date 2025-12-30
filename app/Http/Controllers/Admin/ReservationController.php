@@ -158,20 +158,31 @@ class ReservationController extends Controller
             // On peut renvoyer une vue partielle
             return view('admin.reservations.partials.reservation_details', compact('reservation'));
         }
-        public function annuler($id)
-{
-    $reservation = Reservation::findOrFail($id);
-
-    if ($reservation->Statut_Reservation !== 'confirmee') {
-        return redirect()->back()->with('error', 'Seule une réservation confirmée peut être annulée.');
-    }
-
-    $reservation->Statut_Reservation = 'annulee';
-    $reservation->save();
-
-    return redirect()->back()->with('success', 'Réservation annulée avec succès.');
-}
-
+        public function annuler(Request $request, $id)
+        {
+            // Validation : observation obligatoire
+            $request->validate([
+                'observation' => 'required|string|max:2000',
+            ]);
+        
+            $reservation = Reservation::findOrFail($id);
+        
+            // Vérification du statut uniquement
+            if ($reservation->Statut_Reservation !== 'confirmee') {
+                return redirect()->back()->with('error', 'Seule une réservation confirmée peut être annulée.');
+            }
+        
+            // Annulation par l'utilisateur connecté
+            $reservation->Statut_Reservation = 'annulee';
+            $reservation->observation = $request->input('observation');
+            $reservation->created_by = session('utilisateur')->Id_Utilisateur; 
+            $reservation->save();
+        
+            return redirect()->back()->with('success', 'Réservation annulée avec succès.');
+        }
+        
+        
+        
 public function detruire($id)
 {
     $reservation = Reservation::findOrFail($id);

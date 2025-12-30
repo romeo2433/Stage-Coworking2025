@@ -32,6 +32,8 @@ Route::post('/inscription', [InscriptionController::class, 'store'])->name('insc
 
 Route::get('/admin/inscription', [InscriptionController::class, 'createAdmin'])->name('admin.inscription.create');
 Route::post('/admin/inscription', [InscriptionController::class, 'storeAdmin'])->name('admin.inscription.store');
+Route::put('/admin/inscription/{id}',[InscriptionController::class, 'updateAdminAjax'])->name('admin.inscription.update');
+
 
 // Connexion
 Route::post('/connexion', [ConnexionController::class, 'store'])->name('connexion.store');
@@ -134,6 +136,8 @@ Route::get('/reservations', [ReservationApiController::class, 'index'])->name('r
         Route::post('reservations/{id}/checkin', [PlanningController::class, 'checkin'])->name('reservations.checkin');
         Route::post('reservations/{id}/checkout', [PlanningController::class, 'checkout'])->name('reservations.checkout');
         Route::get('reservations/{id}/duree-max',[ReservationController::class, 'getDureeMax'])->name('reservations.duree_max');
+        Route::put('profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
+
         
         // ==================== ROUTES RÉSERVÉES UNIQUEMENT AU SUPER ADMIN (1) ====================
     

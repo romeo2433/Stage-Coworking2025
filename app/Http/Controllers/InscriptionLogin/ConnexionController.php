@@ -29,14 +29,12 @@ class ConnexionController extends Controller
                                   ->first();
 
         // Si utilisateur non trouvé OU mot de passe incorrect
-       if (!$utilisateur || 
-    (!Hash::check($validated['password'], $utilisateur->password) && 
-     $utilisateur->password !== $validated['password'])) {
-    
-    return back()
-        ->withErrors(['identifiant' => 'Identifiant ou mot de passe incorrect.'])
-        ->withInput($request->only('identifiant'));
-}
+        if (!$utilisateur || !Hash::check($validated['password'], $utilisateur->password)) {
+            return back()
+                ->withErrors(['identifiant' => 'Identifiant ou mot de passe incorrect.'])
+                ->withInput($request->only('identifiant'));
+        }
+        
 
         // Connexion réussie → mise en session
         session([
